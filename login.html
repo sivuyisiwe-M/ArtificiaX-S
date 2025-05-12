@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Signup</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #004e92, #000428);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      width: 350px;
+      padding: 2rem;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      border-radius: 999px;
+      background-color: #f1f1f1;
+    }
+
+    .tab {
+      width: 50%;
+      text-align: center;
+      padding: 0.5rem;
+      cursor: pointer;
+      border-radius: 999px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      background: linear-gradient(to right, #004e92, #000428);
+      color: #fff;
+    }
+
+    form {
+      display: none;
+      flex-direction: column;
+    }
+
+    form.active {
+      display: flex;
+    }
+
+    input, select {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    a {
+      font-size: 0.85rem;
+      color: #004e92;
+      text-decoration: none;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      background: linear-gradient(to right, #004e92, #000428);
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .footer-text a {
+      color: #004e92;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="text-align: center;">welcome to Ubuntu Plug</h2>
+    <div class="tabs">
+      <div class="tab active" id="login-tab">Login</div>
+      <div class="tab" id="signup-tab">Signup</div>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" class="active">
+      <input type="email" placeholder="Email Address" id="login-email" required />
+      <input type="password" placeholder="Password" required />
+      <select id="login-role" required>
+        <option value="">Select Role</option>
+        <option value="user">Candidate/User</option>
+        <option value="recruiter">Recruiter/Employer</option>
+      </select>
+      <a href="#">Forgot password?</a>
+      <button type="submit">Login</button>
+      <div class="footer-text">
+        Not a member? <a href="#" onclick="switchTab('signup')">Signup now</a>
+      </div>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signup-form">
+      <input type="text" placeholder="Full Name" required />
+      <input type="email" placeholder="Email Address" id="signup-email" required />
+      <input type="password" placeholder="Password" required />
+      <select id="signup-role" required>
+        <option value="">Register as</option>
+        <option value="user">Candidate/User</option>
+        <option value="recruiter">Recruiter/Employer</option>
+      </select>
+      <button type="submit">Signup</button>
+      <div class="footer-text">
+        Already have an account? <a href="#" onclick="switchTab('login')">Login</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const loginTab = document.getElementById('login-tab');
+    const signupTab = document.getElementById('signup-tab');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+
+    loginTab.addEventListener('click', () => switchTab('login'));
+    signupTab.addEventListener('click', () => switchTab('signup'));
+
+    function switchTab(tab) {
+      if (tab === 'login') {
+        loginTab.classList.add('active');
+        signupTab.classList.remove('active');
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+      } else {
+        signupTab.classList.add('active');
+        loginTab.classList.remove('active');
+        signupForm.classList.add('active');
+        loginForm.classList.remove('active');
+      }
+    }
+
+    // Handle Signup Redirect
+    signupForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const role = document.getElementById('signup-role').value;
+      if (role === 'user') {
+        window.location.href = 'opportunity.html';
+      } else if (role === 'recruiter') {
+        window.location.href = 'recruiter.html';
+      } else {
+        alert('Please select a role.');
+      }
+    });
+
+    // Handle Login Redirect
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const role = document.getElementById('login-role').value;
+      if (role === 'user') {
+        window.location.href = 'opportunity.html';
+      } else if (role === 'recruiter') {
+        window.location.href = 'recruiter.html';
+      } else {
+        alert('Please select a role.');
+      }
+    });
+  </script>
+</body>
+</html>

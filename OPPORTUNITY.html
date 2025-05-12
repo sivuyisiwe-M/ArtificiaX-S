@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>opprtunity board</title>
+    <link rel="stylesheet" href="/source/opportunity.css">
+</head>
+<body>
+        <!-- Header -->
+        <header>
+            <div class="container header-container">
+                <div class="logo">
+                    
+                    <h1>ubuntu<span>Plug</span></h1>
+                </div>
+                <nav>
+                    <ul id="menu">
+                        <li><a href="/dev1.html">home</a></li>
+                        <li><a href="#opportunity">Opportunities</a></li>
+                        <li><a href="/skillUP.html">Skill Up</a></li>
+                        <li><a href="/MENTORSHIP.html">Mentorship</a></li>
+                        <li><a href="/communityForum.html">Community</a></li>
+                        <!-- <li><a href="#events">Events</a></li> -->
+                    </ul>
+                    <div class="mobile-menu" id="mobile-menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+  
+
+    <!-- Opportunity Board Section -->
+    <section class="opportunities" id="opportunities">
+        <div class="container">
+            <div class="section-title">
+                <h3>Opportunity Board</h3>
+                <p>Find internships, bursaries, scholarships, learnerships, and job shadowing opportunities across South Africa.</p>
+            </div>
+            <div class="filter-options">
+                <div class="filter-group">
+                    <label for="opportunity-type">Opportunity Type</label>
+                    <select id="opportunity-type">
+                        <option value="all">All Opportunities</option>
+                        <option value="internship">Internships</option>
+                        <option value="bursary">Bursaries</option>
+                        <option value="scholarship">Scholarships</option>
+                        <option value="learnership">Learnerships</option>
+                        <option value="job">Employment</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="province">Province</label>
+                    <select id="province">
+                        <option value="all">All Provinces</option>
+                        <option value="gauteng">Gauteng</option>
+                        <option value="western-cape">Western Cape</option>
+                        <option value="eastern-cape">Eastern Cape</option>
+                        <option value="kzn">KwaZulu-Natal</option>
+                        <option value="free-state">Free State</option>
+                        <option value="north-west">North West</option>
+                        <option value="limpopo">Limpopo</option>
+                        <option value="mpumalanga">Mpumalanga</option>
+                        <option value="northern-cape">Northern Cape</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="field">Field of Interest</label>
+                    <select id="field">
+                        <option value="all">All Fields</option>
+                        <option value="it">Information Technology</option>
+                        <option value="business">Business & Finance</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="education">Education</option>
+                        <option value="arts">Creative Arts</option>
+                        <option value="science">Science & Research</option>
+                    </select>
+                </div>
+            </div>
+            <div class="opportunities-grid">
+                <!-- <div class="opportunity-card">
+                    <img src="/api/placeholder/300/180" alt="Opportunity" class="opp-image">
+                    <div class="opp-content">
+                        <span class="opp-type internship">Internship</span>
+                        <h4>Junior Web Developer Internship</h4>
+                        <div class="opp-meta">
+                            <span>Company XYZ</span>
+                            <span>Closing: 30 June 2025</span>
+                        </div>
+                        <p>A 12-month internship opportunity for aspiring web developers to gain hands-on experience in a dynamic tech company.</p>
+                        <div class="opp-footer">
+                            <div class="opp-province">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Gauteng</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Apply Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="opportunity-card">
+                    <img src="/api/placeholder/300/180" alt="Opportunity" class="opp-image">
+                    <div class="opp-content">
+                        <span class="opp-type bursary">Bursary</span>
+                        <h4>Engineering Bursary Program 2026</h4>
+                        <div class="opp-meta">
+                            <span>Company ABC</span>
+                            <span>Closing: 15 August 2025</span>
+                        </div>
+                        <p>Full bursary covering tuition, accommodation, and stipend for engineering students in their 2nd year and above.</p>
+                        <div class="opp-footer">
+                            <div class="opp-province">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Western Cape</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Apply Now</a>
+                        </div>
+                    </div>
+                </div> -->
+
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#" class="btn btn-primary">View All Opportunities</a>
+            </div>
+        </div>
+    </section>
+
+
+<script type="module" src="/source/firebase.js"></script>
+<script type="module" src="opportunity-js.js"></script>
+<script type="module" src="recruiter-js.js"></script>
+</body>
+</html>
