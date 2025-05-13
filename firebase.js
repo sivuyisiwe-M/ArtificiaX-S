@@ -9,7 +9,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
   authDomain: "ubuntuplug.firebaseapp.com",
   projectId: "ubuntuplug",
-  storageBucket: "ubuntuplug.appspot.com",
+  storageBucket: "ubuntuplug.firebasestorage.app",
   messagingSenderId: "887406432080",
   appId: "1:887406432080:web:108e0de9c61d13f418a655",
   measurementId: "G-2J53SZ2K0N"
