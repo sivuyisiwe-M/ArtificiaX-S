@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu Plug</title>
-    <link rel="stylesheet" href="/ArtificiaX-S/source/style.css">
+  <meta charset="UTF-8">
+  <title>Community & Contact</title>
+<link rel="stylesheet" href="/ArtificiaX-S/source/Dev5.css">
+</head>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js"></script>
 </head>
 <body>
-    
+  <h1>💬 Community Forum</h1>
 
-     
- 
- 
- <!-- Header Section -->
-  <header>
-    <div class="container header-content">
-      <div class="logo">
-        Ubuntu<span>Plug</span>
-      </div>
-      <button class="menu-toggle" id="menuToggle">☰</button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="/dev1.html">Home</a></li>
-        <li><a href="/dev2.html">Opportunities</a></li>
-        <li><a href="/dev3.html">Skill Up</a></li>
-        <li><a href="/dev4.html">Mentorship</a></li>
-        <li><a href="/dev5.html">community forum</a></li>
-        
-      </ul>
-    </div>
-  </header>
+  <form id="community-form">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <textarea id="question" placeholder="Ask a question..." required></textarea>
+    <button type="submit">Post</button>
+  </form>
 
+  <div id="community-posts" class="posts"></div>
 
-<h1> ndiyi community forum</h1>
+  <h2>📬 Contact Us</h2>
 
+  <form id="contact-form">
+    <input type="text" id="contact-name" placeholder="Your Name" required />
+    <input type="email" id="contact-email" placeholder="Your Email" required />
+    <textarea id="contact-message" placeholder="Your Message" required></textarea>
+    <button type="submit">Send</button>
+  </form>
+
+  <footer>
+    <p>&copy; 2025 Ubuntu-Plug SA. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
