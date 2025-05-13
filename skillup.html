@@ -1,55 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Skill Up</title>
-  <style>
-    .course-tile {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin: 10px;
-      border-radius: 8px;
-      transition: transform 0.2s;
-    }
-    .course-tile:hover {
-      transform: scale(1.03);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-  </style>
-</head>
 <body>
-  <h1>Skill Up Courses</h1>
+ 
   <div id="course-container"></div>
 
-
-
-
-
-
-
-
-
-
-  
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script>
-    const firebaseConfig = {
-  apiKey: "AIzaSyCeeRzjQMaTEV0xg40jNgQvCYqxaB1iNEA",
-  authDomain: "skill-up-5219f.firebaseapp.com",
-  projectId: "skill-up-5219f",
-  storageBucket: "skill-up-5219f.firebasestorage.app",
-  messagingSenderId: "473313118649",
-  appId: "1:473313118649:web:969cc581db1ac5a8cb0e68",
-  measurementId: "G-LZRGDGRK7S"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = firebase.firestore();
+ 
 </script>
 
 
@@ -60,35 +17,60 @@ const db = firebase.firestore();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ubuntu Plug</title>
-    <link rel="stylesheet" href="/source/style.css">
+    <link rel="stylesheet" href="/source/Dev3.css">
 </head>
 <body>
-    
 
- <!-- Header Section -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skills Board</title>
+  <link rel="stylesheet" href="style."/>
+</head>
+<body>
   <header>
-    <div class="container header-content">
-      <div class="logo">
-        Ubuntu<span>Plug</span>
-      </div>
-      <button class="menu-toggle" id="menuToggle">☰</button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="/dev1.html">Home</a></li>
-        <li><a href="/OPPORTUNITY.html">Opportunities</a></li>
-        <li><a href="/dev3.html">Skill Up</a></li>
-        <li><a href="/dev4.html">Mentorship</a></li>
-        <li><a href="/dev5.html">community forum</a></li>
-        
-      </ul>
-    </div>
+    <h1>🌍 Community Skills Board</h1>
+    <p>Explore or share free/affordable courses and resources</p>
   </header>
-  
 
-<h1> im a skill up page</h1>
+  <section id="courses">
+    <h2>📚 Curated Courses</h2>
+    <ul id="courseList">
+     
+    </ul>
+  </section>
+
+  <section id="tutorials">
+    <h2>🛠️ Tutorials</h2>
+    <ul>
+      <li><a href="https://www.freecodecamp.org/">Coding - FreeCodeCamp</a></li>
+      <li><a href="https://novoresume.com/">CV Writing - NovoResume</a></li>
+      <li><a href="https://www.alison.com/">Business Skills - Alison</a></li>
+    </ul>
+  </section>
+
+  <section id="languages">
+    <h2>🗣️ Language Support</h2>
+    <ul>
+      <li><a href="https://www.duolingo.com/course/en/xh">Learn Xhosa (Duolingo)</a></li>
+      <li><a href="https://www.duolingo.com/course/en/zu">Learn Zulu (Duolingo)</a></li>
+      <li><a href="https://www.britishcouncil.org/">Learn English (British Council)</a></li>
+    </ul>
+  </section>
+
+  <section id="submit">
+    <h2>🏢 Submit Your Course</h2>
+    <form id="courseForm">
+      <input type="text" id="title" placeholder="Course Title" required />
+      <input type="url" id="url" placeholder="Course URL" required />
+      <input type="text" id="org" placeholder="Organization Name" required />
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <script src="script.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 </body>
-</html>
-
+</html> 

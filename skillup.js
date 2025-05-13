@@ -1,4 +1,31 @@
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCeeRzjQMaTEV0xg40jNgQvCYqxaB1iNEA",
+  authDomain: "skill-up-5219f.firebaseapp.com",
+  projectId: "skill-up-5219f",
+  storageBucket: "skill-up-5219f.firebasestorage.app",
+  messagingSenderId: "473313118649",
+  appId: "1:473313118649:web:969cc581db1ac5a8cb0e68",
+  measurementId: "G-LZRGDGRK7S"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+
+
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("course-container");
 
@@ -39,3 +66,5 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error(error);
   });
 });
+
+
