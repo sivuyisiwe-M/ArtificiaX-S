@@ -149,7 +149,7 @@
       
       <select id="login-role" required>
         <option value="">Select Role</option>
-        <option value="user">Candidate/User</option>
+        <option value="user">job seeker/User</option>
         <option value="recruiter">Recruiter/Employer</option>
       </select>
       <div class="error-message" id="login-role-error"></div>
@@ -199,15 +199,16 @@
 
 <script>
   // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
-    authDomain: "ubuntuplug.firebaseapp.com",
-    projectId: "ubuntuplug",
-    storageBucket: "ubuntuplug.appspot.com",
-    messagingSenderId: "887406432080",
-    appId: "1:887406432080:web:108e0de9c61d13f418a655",
-    measurementId: "G-2J53SZ2K0N"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBrrU0NUzG1mSEPgtJgBzZSNcki-kowLHI",
+  authDomain: "ubuntusa-3b893.firebaseapp.com",
+  projectId: "ubuntusa-3b893",
+  storageBucket: "ubuntusa-3b893.firebasestorage.app",
+  messagingSenderId: "11896582174",
+  appId: "1:11896582174:web:86857a82e946ad4d07be0f",
+  measurementId: "G-JCFX6E7ZR4"
+};
+
 
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
@@ -271,7 +272,7 @@
           };
 
           if (role === 'user') {
-            db.collection('userRegistration').doc(userId).set({
+            db.collection('jobSeekerDB').doc(userId).set({
               ...userData,
               skills: [],
               education: [],
@@ -281,7 +282,7 @@
               window.location.href = 'opportunity.html';
             });
           } else if (role === 'recruiter') {
-            db.collection('employerRegistration').doc(userId).set({
+            db.collection('recruiterDB').doc(userId).set({
               ...userData,
               companyName: "",
               contactPerson: fullName,
@@ -325,7 +326,7 @@
           const userId = userCredential.user.uid;
           const timestamp = new Date().toISOString();
 
-          const collection = role === 'user' ? 'userRegistration' : 'employerRegistration';
+          const collection = role === 'user' ? 'jobSeekerDB' : 'recruiterDB';
 
           db.collection(collection).doc(userId).get()
             .then((doc) => {
