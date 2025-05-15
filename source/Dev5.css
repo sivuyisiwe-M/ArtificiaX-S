@@ -1,0 +1,41 @@
+.chat-section {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  color: #fff;
+}
+
+.chat-section h2 {
+  color: #ffa600;
+  text-shadow: 0 0 5px #ffa600, 0 0 10px #ffa600;
+  margin-bottom: 20px;
+}
+
+.chat-box {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: #121212;
+  margin-bottom: 20px;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #2a2a2a;
+}
+
+.message .name {
+  font-weight: bold;
+  color: #ffa600;
+}
+
+.message.mentor {
+  background-color: #1e355c;
+  color: #cce5ff;
+  border-left: 4px solid #007bff;
+}

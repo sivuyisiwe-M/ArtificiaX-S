@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> "Login / Signup - Ubuntu Plug</title>
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f84f74, #0212a8);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      width: 350px;
+      padding: 2rem;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      border-radius: 999px;
+      background-color: #f1f1f1;
+    }
+
+    .tab {
+      width: 50%;
+      text-align: center;
+      padding: 0.5rem;
+      cursor: pointer;
+      border-radius: 999px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      background: linear-gradient(to right, #004e92, #000428);
+      color: #fff;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input, select {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    input:focus, select:focus {
+      border-color: #004e92;
+      box-shadow: 0 0 0 2px rgba(0, 78, 146, 0.1);
+    }
+
+    a {
+      font-size: 0.85rem;
+      color: #004e92;
+      text-decoration: none;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      background: linear-gradient(to right, #004e92, #000428);
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .footer-text a {
+      color: #004e92;
+      text-decoration: none;
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.8rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.5rem;
+      display: none;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+    
+    .loading::after {
+      content: "";
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid rgba(0, 78, 146, 0.3);
+      border-radius: 50%;
+      border-top-color: #004e92;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2 style="text-align: center;">Welcome to Ubuntu Plug</h2>
+    <div class="tabs">
+      <div class="tab active" id="login-tab">Login</div>
+      <div class="tab" id="signup-tab">Signup</div>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" style="display: flex;">
+      <input type="email" placeholder="Email Address" id="login-email" required />
+      <div class="error-message" id="login-email-error"></div>
+      
+      <input type="password" placeholder="Password" id="login-password" required />
+      <div class="error-message" id="login-password-error"></div>
+      
+      <select id="login-role" required>
+        <option value="">Select Role</option>
+        <option value="user">job seeker/User</option>
+        <option value="recruiter">Recruiter/Employer</option>
+      </select>
+      <div class="error-message" id="login-role-error"></div>
+      
+      <a href="#" id="forgot-password">Forgot password?</a>
+      <button type="submit">Login</button>
+      <div class="loading" id="login-loading"></div>
+      <div class="error-message" id="login-general-error"></div>
+      
+      <div class="footer-text">
+        Not a member? <a href="#" onclick="switchTab('signup')">Signup now</a>
+      </div>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signup-form" style="display: none;">
+      <input type="text" placeholder="Full Name" id="signup-name" required />
+      <div class="error-message" id="signup-name-error"></div>
+      
+      <input type="email" placeholder="Email Address" id="signup-email" required />
+      <div class="error-message" id="signup-email-error"></div>
+      
+      <input type="password" placeholder="Password" id="signup-password" required />
+      <div class="error-message" id="signup-password-error"></div>
+      
+      <select id="signup-role" required>
+        <option value="">Register as</option>
+        <option value="user">Candidate/User</option>
+        <option value="recruiter">Recruiter/Employer</option>
+      </select>
+      <div class="error-message" id="signup-role-error"></div>
+      
+      <button type="submit">Signup</button>
+      <div class="loading" id="signup-loading"></div>
+      <div class="error-message" id="signup-general-error"></div>
+      
+      <div class="footer-text">
+        Already have an account? <a href="#" onclick="switchTab('login')">Login</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBrrU0NUzG1mSEPgtJgBzZSNcki-kowLHI",
+  authDomain: "ubuntusa-3b893.firebaseapp.com",
+  projectId: "ubuntusa-3b893",
+  storageBucket: "ubuntusa-3b893.firebasestorage.app",
+  messagingSenderId: "11896582174",
+  appId: "1:11896582174:web:86857a82e946ad4d07be0f",
+  measurementId: "G-JCFX6E7ZR4"
+};
+
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+     // DOM Elements
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const loginEmail = document.getElementById('login-email');
+    const loginRole = document.getElementById('login-role');
+    const signupEmail = document.getElementById('signup-email');
+    const signupRole = document.getElementById('signup-role');
+
+    function switchTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('login-tab').classList.add('active');
+        document.getElementById('signup-tab').classList.remove('active');
+        loginForm.style.display = 'flex';
+        signupForm.style.display = 'none';
+      } else {
+        document.getElementById('signup-tab').classList.add('active');
+        document.getElementById('login-tab').classList.remove('active');
+        signupForm.style.display = 'flex';
+        loginForm.style.display = 'none';
+      }
+    }
+
+    document.getElementById('login-tab').addEventListener('click', () => switchTab('login'));
+    document.getElementById('signup-tab').addEventListener('click', () => switchTab('signup'));
+
+    // Handle Signup
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const fullName = document.getElementById('signup-name').value;
+      const email = signupEmail.value;
+      const password = document.getElementById('signup-password').value;
+      const role = signupRole.value;
+
+      if (!fullName || !email || !password || !role) {
+        alert("Please fill all required fields.");
+        return;
+      }
+
+      const loading = document.getElementById('signup-loading');
+      if (loading) loading.style.display = 'block';
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const userId = userCredential.user.uid;
+          const timestamp = new Date().toISOString();
+
+          const userData = {
+            fullName,
+            email,
+            role,
+            createdAt: timestamp,
+            lastLogin: timestamp,
+            profileComplete: false
+          };
+
+          if (role === 'user') {
+            db.collection('jobSeekerDB').doc(userId).set({
+              ...userData,
+              skills: [],
+              education: [],
+              experience: [],
+              appliedJobs: {}
+            }).then(() => {
+              window.location.href = 'opportunity.html';
+            });
+          } else if (role === 'recruiter') {
+            db.collection('recruiterDB').doc(userId).set({
+              ...userData,
+              companyName: "",
+              contactPerson: fullName,
+              companySize: "",
+              industry: "",
+              location: "",
+              description: "",
+              website: "",
+              postedJobs: {}
+            }).then(() => {
+              window.location.href = 'recruiter.html';
+            });
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        })
+        .finally(() => {
+          if (loading) loading.style.display = 'none';
+        });
+    });
+
+    // Handle Login
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = loginEmail.value;
+      const password = document.getElementById('login-password').value;
+      const role = loginRole.value;
+
+      if (!email || !password || !role) {
+        alert("Please fill all required fields.");
+        return;
+      }
+
+      const loading = document.getElementById('login-loading');
+      if (loading) loading.style.display = 'block';
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const userId = userCredential.user.uid;
+          const timestamp = new Date().toISOString();
+
+          const collection = role === 'user' ? 'jobSeekerDB' : 'recruiterDB';
+
+          db.collection(collection).doc(userId).get()
+            .then((doc) => {
+              if (doc.exists) {
+                db.collection(collection).doc(userId).update({ lastLogin: timestamp });
+                window.location.href = role === 'user' ? 'opportunity.html' : 'recruiter.html';
+              } else {
+                alert("No record found or incorrect role selected.");
+                auth.signOut();
+                if (loading) loading.style.display = 'none';
+              }
+            });
+        })
+        .catch((error) => {
+          alert(error.message);
+          if (loading) loading.style.display = 'none';
+        });
+    });
+
+    // Forgot Password
+    const forgotPasswordLink = document.getElementById('forgot-password');
+    if (forgotPasswordLink) {
+      forgotPasswordLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const email = loginEmail.value;
+        if (!email) {
+          alert("Please enter your email to reset your password.");
+          return;
+        }
+
+        const loading = document.getElementById('login-loading');
+        if (loading) loading.style.display = 'block';
+
+        auth.sendPasswordResetEmail(email)
+          .then(() => alert("Password reset email sent."))
+          .catch((error) => alert(error.message))
+          .finally(() => {
+            if (loading) loading.style.display = 'none';
+          });
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skills Board</title>
+  <link rel="stylesheet" href="style."/>
+</head>
+<body>
+  <header>
+    <h1>🌍 Community Skills Board</h1>
+    <p>Explore or share free/affordable courses and resources</p>
+  </header>
+
+  <section id="courses">
+    <h2>📚 Curated Courses</h2>
+    <ul id="courseList">
+      <!-- JS will insert items -->
+    </ul>
+  </section>
+
+  <section id="tutorials">
+    <h2>🛠️ Tutorials</h2>
+    <ul>
+      <li><a href="https://www.freecodecamp.org/">Coding - FreeCodeCamp</a></li>
+      <li><a href="https://novoresume.com/">CV Writing - NovoResume</a></li>
+      <li><a href="https://www.alison.com/">Business Skills - Alison</a></li>
+    </ul>
+  </section>
+
+  <section id="languages">
+    <h2>🗣️ Language Support</h2>
+    <ul>
+      <li><a href="https://www.duolingo.com/course/en/xh">Learn Xhosa (Duolingo)</a></li>
+      <li><a href="https://www.duolingo.com/course/en/zu">Learn Zulu (Duolingo)</a></li>
+      <li><a href="https://www.britishcouncil.org/">Learn English (British Council)</a></li>
+    </ul>
+  </section>
+
+  <section id="submit">
+    <h2>🏢 Submit Your Course</h2>
+    <form id="courseForm">
+      <input type="text" id="title" placeholder="Course Title" required />
+      <input type="url" id="url" placeholder="Course URL" required />
+      <input type="text" id="org" placeholder="Organization Name" required />
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

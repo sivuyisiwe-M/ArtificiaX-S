@@ -1,37 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu Plug</title>
-    <link rel="stylesheet" href="/source/style.css">
+  <meta charset="UTF-8">
+<<<<<<< HEAD
+  <title>Youth & Mentor Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+=======
+  <title>Community & Contact</title>
+<link rel="stylesheet" href="/source/Dev5.css">
+</head>
+>>>>>>> f08a815e6da36d99fc594ce7da5a9eb8645d71f8
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #ffa600;
+      text-shadow: 0 0 8px #ffa600;
+      margin-bottom: 20px;
+    }
+
+    .chat-section {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .chat-box {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      border: 1px solid #333;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      padding: 8px;
+      border-radius: 6px;
+      background: #2c2c2c;
+    }
+
+    .mentor {
+      background: #002855;
+      color: #a5e1ff;
+    }
+
+    .name {
+      font-weight: bold;
+    }
+
+    form {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #2c2c2c;
+      border: 1px solid #444;
+      color: #ffffff;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #bbb;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #ffa600;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ff8800;
+    }
+  </style>
 </head>
 <body>
-    
 
-     
- 
- 
- <!-- Header Section -->
-  <header>
-    <div class="container header-content">
-      <div class="logo">
-        Ubuntu<span>Plug</span>
-      </div>
-      <button class="menu-toggle" id="menuToggle">☰</button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="/dev1.html">Home</a></li>
-        <li><a href="/dev2.html">Opportunities</a></li>
-        <li><a href="/dev3.html">Skill Up</a></li>
-        <li><a href="/dev4.html">Mentorship</a></li>
-        <li><a href="/dev5.html">community forum</a></li>
-        
-      </ul>
+  <section class="chat-section">
+    <h2>💬 Youth & Mentor Chat</h2>
+
+    <div class="chat-box" id="chatBox">
+      <!-- Chat messages will be dynamically added here -->
     </div>
-  </header>
 
+    <form id="chatForm">
+      <input type="text" id="userName" placeholder="Your Name" required>
+      <textarea id="userMessage" placeholder="Type your message..." required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </section>
 
-<h1> ndiyi community forum</h1>
+  <script>
+    // Replace with your actual config
+const firebaseConfig = {
+  apiKey: "AIzaSyDt2CXtgnGCBo0CFmrvnAYwgh1iBrmsi-A",
+  authDomain: "ubuntu-plug.firebaseapp.com",
+  databaseURL: "https://ubuntu-plug-default-rtdb.firebaseio.com",
+  projectId: "ubuntu-plug",
+  storageBucket: "ubuntu-plug.firebasestorage.app",
+  messagingSenderId: "666310061191",
+  appId: "1:666310061191:web:89f8c03ba001cc69699c22",
+  measurementId: "G-2XNGY72N58"
+};
 
+// Initialize Firebase
+ firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const chatForm = document.getElementById("chatForm");
+    const chatBox = document.getElementById("chatBox");
+
+    chatForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("userName").value.trim();
+      const message = document.getElementById("userMessage").value.trim();
+
+      if (name && message) {
+        const newMessageRef = db.ref("chatMessages").push();
+        newMessageRef.set({
+          name: name,
+          message: message,
+          timestamp: Date.now()
+        });
+
+        chatForm.reset();
+      }
+    });
+
+    db.ref("chatMessages").on("child_added", function (snapshot) {
+      const data = snapshot.val();
+      const isMentor = data.name.toLowerCase().includes("mentor");
+
+      const div = document.createElement("div");
+      div.classList.add("message");
+      if (isMentor) div.classList.add("mentor");
+
+      div.innerHTML = `<div class="name">${data.name}</div><div class="text">${data.message}</div>`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
+
+<section class="contact-section">
+  <h2>📬 <span class="glow">Contact Us</span></h2>
+  <form id="contactForm">
+    <input type="text" id="contactName" placeholder="Your Name" required>
+    <input type="email" id="contactEmail" placeholder="Your Email" required>
+    <textarea id="contactMessage" placeholder="Your Message" required></textarea>
+    <button type="submit">Send</button>
+  </form>
+</section>
 </body>
 </html>
+
