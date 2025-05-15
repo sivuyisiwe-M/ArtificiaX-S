@@ -5,7 +5,8 @@
 <body>
  
   <div id="course-container"></div>
- 
+
+
 
  
 
@@ -25,10 +26,6 @@
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = firebase.firestore();
-
-
-
-f08a815e6da36d99fc594ce7da5a9eb8645d71f8
 </script>
 
 
@@ -40,7 +37,10 @@ f08a815e6da36d99fc594ce7da5a9eb8645d71f8
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ubuntu Plug</title>
     <link rel="stylesheet" href="/source/Dev3.css">
+    <link rel="stylesheet" href="/source/style.css">
+   
 </head>
+
 <body>
 
   <meta charset="UTF-8" />
@@ -49,11 +49,30 @@ f08a815e6da36d99fc594ce7da5a9eb8645d71f8
   <link rel="stylesheet" href="style."/>
 </head>
 <body>
-  <header>
-    <h1>🌍 Community Skills Board</h1>
+  <!-- <header>
+    
+ <h1>🌍 Community Skills Board</h1>
     <p>Explore or share free/affordable courses and resources</p>
+  </header> -->
+<header>
+   
+  
+    <div class="container header-content">
+      <div class="logo">
+        Ubuntu<span>Plug</span>
+      </div>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/dev1.html">Home</a></li>
+        <li><a href="/OPPORTUNITY.html">Opportunities</a></li>
+        <li><a href="/skillup.html">Skill Up</a></li>
+        <li><a href="/dev4.html">Mentorship</a></li>
+        <li><a href="/dev5.html">community forum</a></li>
+        
+      </ul>
+    </div>
   </header>
-
+  
   <section id="courses">
     <h2>📚 Curated Courses</h2>
     <ul id="courseList">
