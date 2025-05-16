@@ -1,14 +1,23 @@
 // Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
-  authDomain: "ubuntuplug.firebaseapp.com",
-  projectId: "ubuntuplug",
-  storageBucket: "ubuntuplug.firebasestorage.app",
-  messagingSenderId: "887406432080",
-  appId: "1:887406432080:web:108e0de9c61d13f418a655",
-  measurementId: "G-2J53SZ2K0N"
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+//   authDomain: "ubuntuplug.firebaseapp.com",
+//   projectId: "ubuntuplug",
+//   storageBucket: "ubuntuplug.firebasestorage.app",
+//   messagingSenderId: "887406432080",
+//   appId: "1:887406432080:web:108e0de9c61d13f418a655",
+//   measurementId: "G-2J53SZ2K0N"
+// };
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBrrU0NUzG1mSEPgtJgBzZSNcki-kowLHI",
+  authDomain: "ubuntusa-3b893.firebaseapp.com",
+  projectId: "ubuntusa-3b893",
+  storageBucket: "ubuntusa-3b893.firebasestorage.app",
+  messagingSenderId: "11896582174",
+  appId: "1:11896582174:web:86857a82e946ad4d07be0f",
+  measurementId: "G-JCFX6E7ZR4"
+};
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -59,7 +68,7 @@ signupForm.addEventListener('submit', function(e) {
       // Store user data in the appropriate database based on role
       if (role === 'user') {
         // Add to userRegistration
-        database.ref('userRegistration/' + userId).set({
+        database.ref('jobSeekerDB/' + userId).set({
           ...userData,
           skills: [],
           education: [],
@@ -75,7 +84,7 @@ signupForm.addEventListener('submit', function(e) {
         });
       } else if (role === 'recruiter') {
         // Add to employerRegistration
-        database.ref('employerRegistration/' + userId).set({
+        database.ref('recruiterDB/' + userId).set({
           ...userData,
           companyName: "", // These can be filled in later by the user
           contactPerson: fullName,
@@ -122,11 +131,11 @@ loginForm.addEventListener('submit', function(e) {
       
       // Check if user exists in the correct database based on selected role
       if (role === 'user') {
-        database.ref('userRegistration/' + userId).once('value')
+        database.ref('jobSeekerDB/' + userId).once('value')
           .then((snapshot) => {
             if (snapshot.exists()) {
               // Update last login time
-              database.ref('userRegistration/' + userId + '/lastLogin').set(timestamp);
+              database.ref('jobSeekerDB/' + userId + '/lastLogin').set(timestamp);
               window.location.href = 'opportunity.html';
             } else {
               alert("No user record found or incorrect role selected.");
@@ -134,11 +143,11 @@ loginForm.addEventListener('submit', function(e) {
             }
           });
       } else if (role === 'recruiter') {
-        database.ref('employerRegistration/' + userId).once('value')
+        database.ref('recruiterDB/' + userId).once('value')
           .then((snapshot) => {
             if (snapshot.exists()) {
               // Update last login time
-              database.ref('employerRegistration/' + userId + '/lastLogin').set(timestamp);
+              database.ref('recruiterDB/' + userId + '/lastLogin').set(timestamp);
               window.location.href = 'recruiter.html';
             } else {
               alert("No employer record found or incorrect role selected.");
