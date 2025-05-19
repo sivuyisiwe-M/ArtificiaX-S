@@ -1,29 +1,42 @@
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+// import { getFirestore } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
-// firebase.js - Firebase initialization and shared functions
+// // Your web app's Firebase configuration
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+//   authDomain: "ubuntuplug.firebaseapp.com",
+//   databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+//   projectId: "ubuntuplug",
+//   storageBucket: "ubuntuplug.firebasestorage.app",
+//   messagingSenderId: "887406432080",
+//   appId: "1:887406432080:web:108e0de9c61d13f418a655",
+//   measurementId: "G-2J53SZ2K0N"
+// };
+
+// // Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
+
+// export { db };
+
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
-
-
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBrrU0NUzG1mSEPgtJgBzZSNcki-kowLHI",
-  authDomain: "ubuntusa-3b893.firebaseapp.com",
-  projectId: "ubuntusa-3b893",
-  storageBucket: "ubuntusa-3b893.firebasestorage.app",
-  messagingSenderId: "11896582174",
-  appId: "1:11896582174:web:86857a82e946ad4d07be0f",
-  measurementId: "G-JCFX6E7ZR4"
-};;
+  apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+  authDomain: "ubuntuplug.firebaseapp.com",
+  databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+  projectId: "ubuntuplug",
+  storageBucket: "ubuntuplug.firebasestorage.app",
+  messagingSenderId: "887406432080",
+  appId: "1:887406432080:web:108e0de9c61d13f418a655",
+  measurementId: "G-2J53SZ2K0N"
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-// Reference to opportunities collection
-const opportunitiesRef = collection(db, "opportunities");
-
-export { db, opportunitiesRef, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp };
-
+export { db };

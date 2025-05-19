@@ -1,23 +1,15 @@
 // Firebase configuration
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
-//   authDomain: "ubuntuplug.firebaseapp.com",
-//   projectId: "ubuntuplug",
-//   storageBucket: "ubuntuplug.firebasestorage.app",
-//   messagingSenderId: "887406432080",
-//   appId: "1:887406432080:web:108e0de9c61d13f418a655",
-//   measurementId: "G-2J53SZ2K0N"
-// };
-
 const firebaseConfig = {
-  apiKey: "AIzaSyBrrU0NUzG1mSEPgtJgBzZSNcki-kowLHI",
-  authDomain: "ubuntusa-3b893.firebaseapp.com",
-  projectId: "ubuntusa-3b893",
-  storageBucket: "ubuntusa-3b893.firebasestorage.app",
-  messagingSenderId: "11896582174",
-  appId: "1:11896582174:web:86857a82e946ad4d07be0f",
-  measurementId: "G-JCFX6E7ZR4"
+  apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+  authDomain: "ubuntuplug.firebaseapp.com",
+  projectId: "ubuntuplug",
+  storageBucket: "ubuntuplug.firebasestorage.app",
+  messagingSenderId: "887406432080",
+  appId: "1:887406432080:web:108e0de9c61d13f418a655",
+  measurementId: "G-2J53SZ2K0N"
 };
+
+
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

@@ -1,5 +1,5 @@
 // // Firestore security rules - Copy these to your Firebase console
-// // Path: Firebase Console > Firestore Database > Rules
+// Path: Firebase Console > Firestore Database > Rules
 
 // rules_version = '2';
 // service cloud.firestore {

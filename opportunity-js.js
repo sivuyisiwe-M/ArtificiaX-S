@@ -77,151 +77,346 @@
 // });
 
 
-// opportunity.js - Display opportunities from the database
 
-import { opportunitiesRef, getDocs, query, where, orderBy, limit } from './firebase.js';
+
+
+
+
+
+
+
+// opportunity.js - Display opportunities from the database
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+// Your web app's Firebase configuration - Matches your firebase.js
+const firebaseConfig = {
+  apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+  authDomain: "ubuntuplug.firebaseapp.com",
+  databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+  projectId: "ubuntuplug",
+  storageBucket: "ubuntuplug.firebasestorage.app",
+  messagingSenderId: "887406432080",
+  appId: "1:887406432080:web:108e0de9c61d13f418a655",
+  measurementId: "G-2J53SZ2K0N"
+};
+
+// Initialize Firebase directly in this file to avoid import issues
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// opportunity.js - Complete implementation for displaying opportunities including recruiter jobs
 
 document.addEventListener('DOMContentLoaded', function() {
-    const opportunitiesGrid = document.querySelector('.opportunities-grid');
-    const opportunityTypeFilter = document.getElementById('opportunity-type');
-    const provinceFilter = document.getElementById('province');
-    const fieldFilter = document.getElementById('field');
+  // Initialize Firebase directly - no imports to avoid module issues
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+    authDomain: "ubuntuplug.firebaseapp.com",
+    databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+    projectId: "ubuntuplug",
+    storageBucket: "ubuntuplug.firebasestorage.app",
+    messagingSenderId: "887406432080",
+    appId: "1:887406432080:web:108e0de9c61d13f418a655",
+    measurementId: "G-2J53SZ2K0N"
+  };
 
-    // Load opportunities when page loads
-    loadOpportunities();
-
-    // Add event listeners for filters
-    if (opportunityTypeFilter) {
-        opportunityTypeFilter.addEventListener('change', loadOpportunities);
-    }
-    if (provinceFilter) {
-        provinceFilter.addEventListener('change', loadOpportunities);
-    }
-    if (fieldFilter) {
-        fieldFilter.addEventListener('change', loadOpportunities);
-    }
-
-    // Function to load opportunities with filters
-    async function loadOpportunities() {
-        if (!opportunitiesGrid) return;
-
-        try {
-            // Clear existing cards
-            opportunitiesGrid.innerHTML = '';
-
-            // Get filter values
-            const typeFilter = opportunityTypeFilter ? opportunityTypeFilter.value : 'all';
-            const provinceFilter = document.getElementById('province') ? document.getElementById('province').value : 'all';
-            const fieldFilter = document.getElementById('field') ? document.getElementById('field').value : 'all';
-
-            // Build query based on filters
-            let q = query(opportunitiesRef, orderBy('createdAt', 'desc'));
-
-            // Apply type filter if not "all"
-            if (typeFilter !== 'all') {
-                q = query(q, where('type', '==', typeFilter));
-            }
-
-            // Apply province filter (customize based on your actual field names)
-            if (provinceFilter !== 'all') {
-                // Convert UI friendly values to match what's stored in database
-                const locationValue = convertProvinceFilterToLocationValue(provinceFilter);
-                q = query(q, where('location', '==', locationValue));
-            }
-
-            // Note: For field filtering, you'll need to add a 'field' property to your opportunities
-            // when they're created in recruiter.js
-
-            // Limit results for performance
-            q = query(q, limit(50));
-
-            // Execute query
-            const querySnapshot = await getDocs(q);
-            
-            if (querySnapshot.empty) {
-                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities found matching your criteria.</p>';
-                return;
-            }
-
-            // Create cards for each opportunity
-            querySnapshot.forEach((doc) => {
-                const opportunity = doc.data();
-                const card = createOpportunityCard(opportunity, doc.id);
-                opportunitiesGrid.appendChild(card);
-            });
-
-        } catch (error) {
-            console.error("Error loading opportunities: ", error);
-            opportunitiesGrid.innerHTML = '<p class="error">Error loading opportunities. Please try again later.</p>';
-        }
-    }
-
-    // Helper function to convert province filter values to location values
-    function convertProvinceFilterToLocationValue(provinceFilter) {
-        const provinceMap = {
-            'gauteng': 'Gauteng',
-            'western-cape': 'Western Cape',
-            'eastern-cape': 'Eastern Cape',
-            'kzn': 'KwaZulu-Natal',
-            'free-state': 'Free State',
-            'north-west': 'North West',
-            'limpopo': 'Limpopo',
-            'mpumalanga': 'Mpumalanga',
-            'northern-cape': 'Northern Cape'
-        };
+  // Initialize Firebase using the global namespace approach
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  
+  console.log("Firebase initialized in opportunity.js");
+  
+  // Get reference to the opportunities grid
+  const opportunitiesGrid = document.querySelector('.opportunities-grid');
+  const opportunityTypeFilter = document.getElementById('opportunity-type');
+  const provinceFilter = document.getElementById('province');
+  const fieldFilter = document.getElementById('field');
+  const searchInput = document.getElementById('search-input');
+  
+  // Function to load and display opportunities
+  async function loadOpportunities() {
+    try {
+      // Clear existing opportunities
+      if (opportunitiesGrid) {
+        opportunitiesGrid.innerHTML = '<p>Loading opportunities...</p>';
+      } else {
+        console.error("Opportunities grid not found in the document");
+        return;
+      }
+      
+      // Get filter values
+      const typeFilter = opportunityTypeFilter ? opportunityTypeFilter.value : 'all';
+      const provinceFilterValue = provinceFilter ? provinceFilter.value : 'all';
+      const fieldFilterValue = fieldFilter ? fieldFilter.value : 'all';
+      const searchQuery = searchInput ? searchInput.value.toLowerCase() : '';
+      
+      console.log("Loading opportunities with filters:", {
+        type: typeFilter,
+        province: provinceFilterValue,
+        field: fieldFilterValue,
+        search: searchQuery
+      });
+      
+      let allOpportunities = [];
+      
+      // 1. Load opportunities from the opportunities collection
+      console.log("Fetching from opportunities collection...");
+      try {
+        const opportunitiesSnapshot = await db.collection('opportunities').get();
+        console.log(`Found ${opportunitiesSnapshot.size} items in opportunities collection`);
         
-        return provinceMap[provinceFilter] || provinceFilter;
-    }
-
-    // Function to create opportunity card
-    function createOpportunityCard(opportunity, id) {
-        const card = document.createElement('div');
-        card.className = 'opportunity-card';
-        
-        const closingDate = new Date(opportunity.closingDate);
-        const formattedDate = closingDate.toLocaleDateString('en-ZA', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
+        opportunitiesSnapshot.forEach(doc => {
+          const data = doc.data();
+          allOpportunities.push({
+            id: doc.id,
+            ...data
+          });
+          console.log(`Added opportunity: ${doc.id}`);
         });
-
-        card.innerHTML = `
-            <img src="/api/placeholder/300/180" alt="${opportunity.title}" class="opp-image">
-            <div class="opp-content">
-                <span class="opp-type ${opportunity.type}">${capitalizeFirstLetter(opportunity.type)}</span>
-                <h4>${opportunity.title}</h4>
-                <div class="opp-meta">
-                    <span>${opportunity.company}</span>
-                    <span>Closing: ${formattedDate}</span>
-                </div>
-                <p>${opportunity.description.length > 120 ? opportunity.description.substring(0, 120) + '...' : opportunity.description}</p>
-                <div class="opp-footer">
-                    <div class="opp-province">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>${opportunity.location}</span>
-                    </div>
-                    <a href="#" class="btn btn-primary apply-btn" data-id="${id}">Apply Now</a>
-                </div>
-            </div>
-        `;
-
-        // Add event listener for apply button (if needed)
-        const applyBtn = card.querySelector('.apply-btn');
-        if (applyBtn) {
-            applyBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                // Implement application logic here or redirect to application page
-                alert(`Applying for opportunity: ${opportunity.title}`);
-                // Alternative: window.location.href = `/apply.html?id=${id}`;
+      } catch (error) {
+        console.error("Error fetching opportunities:", error);
+      }
+      
+      // 2. Load jobs from recruiterDB collection
+      console.log("Fetching from recruiterDB collection...");
+      try {
+        const recruitersSnapshot = await db.collection('recruiterDB').get();
+        console.log(`Found ${recruitersSnapshot.size} recruiters`);
+        
+        recruitersSnapshot.forEach(recruiterDoc => {
+          const recruiterData = recruiterDoc.data();
+          console.log(`Checking recruiter ${recruiterDoc.id} for jobs...`);
+          
+          // Check if recruiter has posted jobs
+          if (recruiterData.postedJobs && Object.keys(recruiterData.postedJobs).length > 0) {
+            console.log(`Recruiter ${recruiterDoc.id} has ${Object.keys(recruiterData.postedJobs).length} jobs`);
+            
+            // Process each job
+            Object.entries(recruiterData.postedJobs).forEach(([jobId, jobData]) => {
+              const job = {
+                id: jobId,
+                ...jobData,
+                // Add recruiter information
+                recruiterID: recruiterDoc.id,
+                companyName: recruiterData.companyName || recruiterData.company || "Unknown Company",
+                // If job type is not specified, default to 'job'
+                type: jobData.type || 'job'
+              };
+              
+              allOpportunities.push(job);
+              console.log(`Added job ${jobId} from recruiter ${recruiterDoc.id}`);
             });
-        }
-
-        return card;
+          } else {
+            console.log(`Recruiter ${recruiterDoc.id} has no jobs or postedJobs is missing`);
+          }
+        });
+      } catch (error) {
+        console.error("Error fetching recruiter jobs:", error);
+      }
+      
+      console.log(`Total opportunities before filtering: ${allOpportunities.length}`);
+      
+      // Apply filters
+      let filteredOpportunities = allOpportunities;
+      
+      // Filter by type
+      if (typeFilter && typeFilter !== 'all') {
+        filteredOpportunities = filteredOpportunities.filter(opp => {
+          const oppType = (opp.type || '').toLowerCase();
+          return oppType === typeFilter.toLowerCase();
+        });
+      }
+      
+      // Filter by province/location
+      if (provinceFilterValue && provinceFilterValue !== 'all') {
+        filteredOpportunities = filteredOpportunities.filter(opp => {
+          const oppProvince = (opp.province || '').toLowerCase();
+          const oppLocation = (opp.location || '').toLowerCase();
+          return oppProvince === provinceFilterValue.toLowerCase() || 
+                 oppLocation.includes(provinceFilterValue.toLowerCase());
+        });
+      }
+      
+      // Filter by field/industry
+      if (fieldFilterValue && fieldFilterValue !== 'all') {
+        filteredOpportunities = filteredOpportunities.filter(opp => {
+          const oppField = (opp.field || '').toLowerCase();
+          const oppIndustry = (opp.industry || '').toLowerCase();
+          return oppField === fieldFilterValue.toLowerCase() || 
+                 oppIndustry === fieldFilterValue.toLowerCase();
+        });
+      }
+      
+      // Filter by search query
+      if (searchQuery) {
+        filteredOpportunities = filteredOpportunities.filter(opp => {
+          const title = (opp.title || '').toLowerCase();
+          const desc = (opp.description || '').toLowerCase();
+          const company = (opp.company || opp.companyName || '').toLowerCase();
+          return title.includes(searchQuery) || 
+                 desc.includes(searchQuery) || 
+                 company.includes(searchQuery);
+        });
+      }
+      
+      console.log(`Filtered opportunities: ${filteredOpportunities.length}`);
+      
+      // Clear loading message
+      opportunitiesGrid.innerHTML = '';
+      
+      // Display filtered opportunities
+      if (filteredOpportunities.length === 0) {
+        opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities found. Try adjusting your filters.</p>';
+      } else {
+        filteredOpportunities.forEach(opp => {
+          displayOpportunity(opp);
+        });
+      }
+    } catch (error) {
+      console.error("Error in loadOpportunities:", error);
+      if (opportunitiesGrid) {
+        opportunitiesGrid.innerHTML = '<p class="error">Error loading opportunities. Please try again later.</p>';
+      }
     }
-
-    // Helper function to capitalize first letter
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+  
+  // Function to display a single opportunity
+  function displayOpportunity(opp) {
+    try {
+      const opportunityElement = document.createElement('div');
+      opportunityElement.className = 'opportunity-card';
+      
+      // Create category badge
+      const category = opp.type || 'job';
+      const badgeClass = getBadgeClass(category);
+      
+      // Format deadline if exists
+      const deadlineDisplay = opp.deadline ? `<div class="deadline">Deadline: ${formatDate(opp.deadline)}</div>` : '';
+      
+      // Display company name from either field
+      const companyName = opp.company || opp.companyName || 'Company not specified';
+      
+      opportunityElement.innerHTML = `
+        <div class="opportunity-header">
+          <span class="badge ${badgeClass}">${capitalizeFirstLetter(category)}</span>
+          <h3>${opp.title || 'Untitled Opportunity'}</h3>
+        </div>
+        <div class="opportunity-details">
+          <div class="company">${companyName}</div>
+          <div class="location">${opp.location || opp.province || 'Location not specified'}</div>
+          ${deadlineDisplay}
+        </div>
+        <div class="opportunity-description">
+          ${opp.description ? truncateText(opp.description, 100) : 'No description provided.'}
+        </div>
+        <a href="#" class="btn btn-secondary view-details" data-id="${opp.id}">View Details</a>
+      `;
+      
+      // Add event listener to the view details button
+      const viewDetailsBtn = opportunityElement.querySelector('.view-details');
+      viewDetailsBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        showOpportunityDetails(opp);
+      });
+      
+      opportunitiesGrid.appendChild(opportunityElement);
+    } catch (error) {
+      console.error("Error displaying opportunity:", error, opp);
     }
+  }
+  
+  // Helper functions
+  function capitalizeFirstLetter(string) {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+  
+  function truncateText(text, maxLength) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+  
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString();
+    } catch (e) {
+      console.error("Error formatting date:", e);
+      return dateStr; // Return original string if can't format
+    }
+  }
+
+  function getBadgeClass(category) {
+    if (!category) return 'badge-default';
+    const categoryLower = category.toLowerCase();
+    switch (categoryLower) {
+      case 'internship': return 'badge-primary';
+      case 'bursary': return 'badge-success';
+      case 'scholarship': return 'badge-info';
+      case 'learnership': return 'badge-warning';
+      case 'job': return 'badge-secondary';
+      default: return 'badge-default';
+    }
+  }
+  
+  function showOpportunityDetails(opp) {
+    // Log the opportunity being viewed
+    console.log('Viewing details for:', opp);
+    
+    // Example: Display in alert (replace with modal or redirect to details page)
+    const details = `
+      Title: ${opp.title || 'No title'}
+      Company: ${opp.company || opp.companyName || 'No company'}
+      Location: ${opp.location || opp.province || 'Location not specified'}
+      Type: ${opp.type || 'Not specified'}
+      Description: ${opp.description || 'No description'}
+    `;
+    
+    alert(details);
+    
+    // You would typically implement a modal or redirect to a details page here
+  }
+  
+  // Set up event listeners for filters
+  if (opportunityTypeFilter) {
+    opportunityTypeFilter.addEventListener('change', loadOpportunities);
+  }
+  
+  if (provinceFilter) {
+    provinceFilter.addEventListener('change', loadOpportunities);
+  }
+  
+  if (fieldFilter) {
+    fieldFilter.addEventListener('change', loadOpportunities);
+  }
+  
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce(loadOpportunities, 300));
+  }
+  
+  // Debounce function
+  function debounce(func, delay) {
+    let debounceTimer;
+    return function() {
+      const context = this;
+      const args = arguments;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => func.apply(context, args), delay);
+    };
+  }
+  
+  // Add a button to manually refresh opportunities if needed
+  const viewAllBtn = document.querySelector('.view-all-btn');
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      loadOpportunities();
+    });
+  }
+  
+  // Load opportunities on page load
+  console.log("Initial load of opportunities");
+  loadOpportunities();
 });
-
