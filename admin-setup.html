@@ -1,0 +1,69 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Setup</title>
+</head>
+<body>
+  <h2>Click to create admin users</h2>
+  <button id="create-admins-btn" onclick="createAdmins()">Create Admins</button>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+      authDomain: "ubuntuplug.firebaseapp.com",
+      databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+      projectId: "ubuntuplug",
+      storageBucket: "ubuntuplug.firebasestorage.app",
+      messagingSenderId: "887406432080",
+      appId: "1:887406432080:web:108e0de9c61d13f418a655",
+      measurementId: "G-2J53SZ2K0N"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    async function createAdmins() {
+      const createAdminsBtn = document.getElementById('create-admins-btn');
+      createAdminsBtn.disabled = true;
+      createAdminsBtn.textContent = 'Creating admins...';
+
+      const admins = [
+        { fullName: "Admin One", email: "millymaran@gmail.com", password: "Admin123@", role: "admin" },
+        { fullName: "Admin Two", email: "admin2@example.com", password: "Admin123!", role: "admin" }
+      ];
+
+      for (const admin of admins) {
+        try {
+          const userCredential = await auth.createUserWithEmailAndPassword(admin.email, admin.password);
+          const userId = userCredential.user.uid;
+          const timestamp = new Date().toISOString();
+
+          await db.collection("admin").doc(userId).set({
+            fullName: admin.fullName,
+            email: admin.email,
+            role: admin.role,
+            createdAt: timestamp,
+            lastLogin: timestamp,
+            profileComplete: true
+          });
+
+          console.log(`✅ Admin created: ${admin.email}`);
+        } catch (error) {
+          console.error(`❌ Error creating admin (${admin.email}):`, error.message);
+        }
+      }
+
+      createAdminsBtn.textContent = 'Admins created!';
+      alert("Admins created. You may now close this page.");
+    }
+  </script>
+</body>
+</html>
