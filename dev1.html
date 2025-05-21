@@ -4,23 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UbuntuPlug</title>
-    <link rel="stylesheet" href="dev1.css">
+    <link rel="stylesheet" href="./source/css/dev1.css">
+    <link rel="stylesheet" href="./source/css/profile.css">
  
 </head>
 <body>
-    <header>
-        <div class="logo">Ubuntu <span style="color: orange;">Plug</span></div>
-        <nav>
+<header>
+    <div class="logo">Ubuntu <span style="color: orange;">Plug</span></div>
+    <nav>
+        <ul>
+            <li><a href="/dev1.html">home</a></li>
+            <li><a href="/opportunity.html">Opportunities</a></li>
+            <li><a href="/skillUP.html">Skill Up</a></li>
+            <li><a href="/MENTORSHIP.html">Mentorship</a></li>
+            <li><a href="/dev5.html">Community</a></li>
+        </ul>
+    </nav>
+    <div class="user-menu">
+        <button class="user-icon-btn">
+            <img src="/images/user-icon.png" alt="User Icon">
+        </button>
+        <div class="dropdown-menu">
             <ul>
-                        <li><a href="/dev1.html">home</a></li>
-                        <li><a href="/opportunity.html">Opportunities</a></li>
-                        <li><a href="/skillUP.html">Skill Up</a></li>
-                        <li><a href="/MENTORSHIP.html">Mentorship</a></li>
-                        <li><a href="/dev5.html">Community</a></li>
+                <li><a href="/profile.html">Profile</a></li>
+                <li><a href="#">My reviews</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">Help</a></li>
+                <li><a href="#">Privacy Centre</a></li>
+                <li><a href="#" class="sign-out-btn">Sign out</a></li>
             </ul>
-        </nav>
-        <button class="login-btn">Log In</button>
-    </header>
+        </div>
+    </div>
+</header>
+
 
     <section class="features">
         <h1>Our Core Features</h1>
@@ -74,5 +90,8 @@
         </div>
         <p class="copyright">© 2025 YouthLink SA. All rights reserved.</p>
     </footer>
+
+   <script src="./source/javascript/home.js"></script>
+
 </body>
 </html>

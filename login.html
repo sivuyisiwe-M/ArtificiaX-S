@@ -74,10 +74,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   
-  
-
   <script>
-  
     // Firebase configuration and initialization
     const firebaseConfig = {
       apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
@@ -151,7 +148,11 @@
               });
           })
           .catch((error) => {
-            alert(error.message);
+            if (error.code === 'auth/invalid-login-credentials') {
+              alert("Invalid email or password. Please try again.");
+            } else {
+              alert(error.message);
+            }
           })
           .finally(() => {
             if (loading) loading.style.display = 'none';
@@ -208,7 +209,7 @@
           };
 
           if (role === 'user') {
-            db.collection('jobSeeker').doc(userId).set({
+            return db.collection('jobSeeker').doc(userId).set({
               ...userData,
               skills: [],
               education: [],
@@ -216,7 +217,7 @@
               appliedJobs: {}
             });
           } else if (role === 'recruiter') {
-            db.collection('recruiterDB').doc(userId).set({
+            return db.collection('recruiterDB').doc(userId).set({
               ...userData,
               companyName: "",
               contactPerson: fullName,
@@ -228,7 +229,8 @@
               postedJobs: {}
             });
           }
-
+        })
+        .then(() => {
           window.location.href = role === 'user' ? 'opportunity.html' : 'recruiter.html';
         })
         .catch((error) => {

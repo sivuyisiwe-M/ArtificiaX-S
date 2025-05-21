@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile - Ubuntu Plug</title>
+  
+  <link rel="stylesheet" href="/source/css/profile.css">
+  <link rel="stylesheet" href="../source/css/dev1.css">
+</head>
+
+<body>
+  <header>
+    <div class="logo">Ubuntu <span style="color: orange;">Plug</span></div>
+    <nav>
+      <ul>
+        <li><a href="/dev1.html">home</a></li>
+        <li><a href="/opportunity.html">Opportunities</a></li>
+        <li><a href="/skillUP.html">Skill Up</a></li>
+        <li><a href="/MENTORSHIP.html">Mentorship</a></li>
+        <li><a href="/dev5.html">Community</a></li>
+      </ul>
+    </nav>
+    <div class="user-menu">
+      <button class="user-icon-btn">
+        <img src="/images/user-icon.png" alt="User Icon">
+      </button>
+      <div class="dropdown-menu">
+        <ul>
+          <li><a href="/profile.html">Profile</a></li>
+          <li><a href="#">My reviews</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Help</a></li>
+          <li><a href="#">Privacy Centre</a></li>
+          <li><a href="#" class="sign-out-btn">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2 id="user-name"></h2>
+    <div class="profile-info">
+      <!-- <p id="full-name"></p> -->
+      <p id="email"></p>
+    </div>
+    <div class="resume-section">
+      <h3>Resume</h3>
+      <input type="file" id="resume-upload" accept=".pdf">
+      <button id="resume-upload-btn">Upload Resume</button>
+      <p id="resume-status"></p>
+    </div>
+    <div class="qualifications-section">
+      <h3>Qualifications</h3>
+      <textarea id="qualifications-input" placeholder="Highlight your skills and experience"></textarea>
+      <button id="qualifications-save-btn">Save Qualifications</button>
+      <p id="qualifications-status"></p>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  
+  <script>
+    // Firebase configuration and initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+      authDomain: "ubuntuplug.firebaseapp.com",
+      databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+      projectId: "ubuntuplug",
+      storageBucket: "ubuntuplug.firebasestorage.app",
+      messagingSenderId: "887406432080",
+      appId: "1:887406432080:web:108e0de9c61d13f418a655",
+      measurementId: "G-2J53SZ2K0N"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        db.collection('jobSeeker').doc(user.uid).get()
+          .then((doc) => {
+            if (doc.exists) {
+              document.getElementById('user-name').textContent = doc.data().fullName;
+              document.getElementById('full-name').textContent = doc.data().fullName;
+              document.getElementById('email').textContent = doc.data().email;
+            }
+          });
+      } else {
+        console.log('No user is signed in.');
+      }
+    });
+  </script>
+
+  <script src="../source/javascript/profile.js"></script>
+</body>
+</html>
