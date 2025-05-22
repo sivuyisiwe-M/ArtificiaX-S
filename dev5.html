@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+edit the following code so that the image show in chat: <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -122,12 +122,13 @@
     <div class="chat-box" id="chatBox">
       <!-- Chat messages will be dynamically added here -->
     </div>
+<form id="chatForm">
+  <input type="text" id="userName" placeholder="Your Name" required>
+  <textarea id="userMessage" placeholder="Type your message..." required></textarea>
+  <input type="file" id="userImage" accept="image/*">
+  <button type="submit">Send</button>
+</form>
 
-    <form id="chatForm">
-      <input type="text" id="userName" placeholder="Your Name" required>
-      <textarea id="userMessage" placeholder="Type your message..." required></textarea>
-      <button type="submit">Send</button>
-    </form>
   </section>
 
   <script>
@@ -137,7 +138,7 @@ const firebaseConfig = {
   authDomain: "ubuntu-plug.firebaseapp.com",
   databaseURL: "https://ubuntu-plug-default-rtdb.firebaseio.com",
   projectId: "ubuntu-plug",
-  storageBucket: "ubuntu-plug.firebasestorage.app",
+storageBucket: "ubuntu-plug.appspot.com",
   messagingSenderId: "666310061191",
   appId: "1:666310061191:web:89f8c03ba001cc69699c22",
   measurementId: "G-2XNGY72N58"
@@ -176,9 +177,16 @@ const firebaseConfig = {
       div.classList.add("message");
       if (isMentor) div.classList.add("mentor");
 
-      div.innerHTML = `<div class="name">${data.name}</div><div class="text">${data.message}</div>`;
+       div.innerHTML = `
+        <div class="name">${data.name}</div>
+        <div class="text">${data.message}</div>
+        ${data.imageUrl ? `<img src="${data.imageUrl}" alt="Uploaded Image">` : ""}
+      `;
+      
+      
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
+      
     });
   </script>
 

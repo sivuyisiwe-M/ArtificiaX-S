@@ -13,6 +13,7 @@ const firebaseConfig = {
 // ✅ Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const storage = firebase.storage(); // ✅ Added for image support
 
 // ✅ References
 const messagesRef = db.ref("chatMessages");
@@ -23,16 +24,28 @@ const chatForm = document.getElementById("chatForm");
 const chatBox = document.getElementById("chatBox");
 
 if (chatForm) {
-  chatForm.addEventListener("submit", function (e) {
+  chatForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const name = document.getElementById("userName").value.trim();
     const message = document.getElementById("userMessage").value.trim();
+    const imageFile = document.getElementById("userImage").files[0]; // ✅ Image input
 
-    if (name && message) {
+    if (name && (message || imageFile)) {
+      let imageUrl = "";
+
+      // ✅ Upload image to Firebase Storage
+      if (imageFile) {
+        const imageRef = storage.ref(`chatImages/${Date.now()}_${imageFile.name}`);
+        await imageRef.put(imageFile);
+        imageUrl = await imageRef.getDownloadURL();
+      }
+
+      // ✅ Push message + optional image URL
       messagesRef.push({
         name: name,
         message: message,
+        imageUrl: imageUrl,
         timestamp: Date.now()
       });
 
@@ -51,7 +64,8 @@ if (chatForm) {
 
     div.innerHTML = `
       <div class="name">${data.name}</div>
-      <div class="text">${data.message}</div>
+      <div class="text">${data.message || ""}</div>
+      ${data.imageUrl ? `<img src="${data.imageUrl}" alt="uploaded image" style="max-width: 100%; margin-top: 5px;">` : ""}
     `;
 
     chatBox.appendChild(div);
@@ -62,20 +76,19 @@ if (chatForm) {
 // ✅ Contact Form Submit
 document.getElementById("contactForm").addEventListener("submit", function (e) {
   e.preventDefault();
-    const name = document.getElementById("contactName").value.trim();
-    const email = document.getElementById("contactEmail").value.trim();
-    const message = document.getElementById("contactMessage").value.trim();
+  const name = document.getElementById("contactName").value.trim();
+  const email = document.getElementById("contactEmail").value.trim();
+  const message = document.getElementById("contactMessage").value.trim();
 
-    if (name && email && message) {
-      contactRef.push({
-        name: name,
-        email: email,
-        message: message,
-        timestamp: Date.now()
-      });
+  if (name && email && message) {
+    contactRef.push({
+      name: name,
+      email: email,
+      message: message,
+      timestamp: Date.now()
+    });
 
-      alert("Message sent! ✅");
-      contactForm.reset();
-    }
-  });
-
+    alert("Message sent! ✅");
+    contactForm.reset();
+  }
+});
