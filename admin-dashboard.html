@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./source/admin-dashboard.css"> 
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <div id="userInfo">Loading user information...</div>
+    
+    <div class="button-group">
+      <button id="downloadBtn" onclick="downloadUserData()" disabled>Download User Data</button>
+      <button id="logoutBtn" class="danger" onclick="logout()">Logout</button>
+    </div>
+    
+    <div id="status" class="status"></div>
+    <div id="loading" class="loading">Processing, please wait...</div>
+  </div>
+
+  <!-- Load Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+      authDomain: "ubuntuplug.firebaseapp.com",
+      databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+      projectId: "ubuntuplug",
+      storageBucket: "ubuntuplug.firebasestorage.app",
+      messagingSenderId: "887406432080",
+      appId: "1:887406432080:web:108e0de9c61d13f418a655",
+      measurementId: "G-2J53SZ2K0N"
+    };
+
+    try {
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const firestore = firebase.firestore();
+      
+      // Check authentication state
+      auth.onAuthStateChanged(handleAuthStateChange);
+
+      function handleAuthStateChange(user) {
+        if (!user) {
+          // Not logged in, redirect to login page
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        // Verify admin status
+        verifyAdminStatus(user);
+      }
+
+      function verifyAdminStatus(user) {
+        const uid = user.uid;
+        firestore.collection('admin').doc(uid).get()
+          .then((doc) => {
+            if (!doc.exists || doc.data().role !== 'admin') {
+              showStatus('Access denied. Admin privileges required.', 'error');
+              setTimeout(() => {
+                auth.signOut();
+                window.location.href = 'login.html';
+              }, 2000);
+              return;
+            }
+            
+            // Admin verified, update UI
+            document.getElementById('userInfo').innerHTML = `
+              <p>Welcome, Admin ${user.email || user.displayName || 'User'}</p>
+            `;
+            
+            // Enable dashboard functionality
+            document.getElementById('downloadBtn').disabled = false;
+          })
+          .catch(error => {
+            showStatus('Error verifying admin status. Please try again.', 'error');
+            console.error('Admin verification error:', error);
+          });
+      }
+
+      // function downloadUserData() {
+      //   if (!auth.currentUser) return;
+        
+      //   // Show loading indicator
+      //   document.getElementById('loading').style.display = 'block';
+      //   document.getElementById('downloadBtn').disabled = true;
+        
+      //   // Get user data from Firestore
+      //   const usersRef = firestore.collection('users');
+      //   usersRef.get()
+      //     .then(querySnapshot => {
+      //       const users = querySnapshot.docs.map(doc => doc.data());
+            
+      //       if (users.length === 0) {
+      //         showStatus('No user data found', 'info');
+      //         return;
+      //       }
+            
+      //       // Convert data to CSV
+      //       const csvHeader = Object.keys(users[0]).join(',') + '\n';
+      //       const csvData = users.map(user => Object.values(user).join(',')).join('\n');
+      //       const csv = csvHeader + csvData;
+            
+      //       // Create download link
+      //       const blob = new Blob([csv], {type: 'text/csv'});
+      //       const url = URL.createObjectURL(blob);
+      //       const link = document.createElement('a');
+      //       link.href = url;
+      //       link.download = `user_data_${new Date().toISOString().split('T')[0]}.csv`;
+      //       document.body.appendChild(link);
+      //       link.click();
+      //       document.body.removeChild(link);
+            
+      //       showStatus('User data downloaded successfully', 'success');
+      //     })
+      //     .catch(error => {
+      //       showStatus('Error downloading user data: ' + error.message, 'error');
+      //       console.error('Download error:', error);
+      //     })
+      //     .finally(() => {
+      //       document.getElementById('loading').style.display = 'none';
+      //       document.getElementById('downloadBtn').disabled = false;
+      //     });
+      // }
+      
+      function downloadUserData() {
+        if (!auth.currentUser) return;
+        
+        // Show loading indicator
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('downloadBtn').disabled = true;
+        
+        // Get user data from Firestore
+        const jobSeekersRef = firestore.collection('jobSeeker');
+        const recruitersRef = firestore.collection('recruiterDB');
+        
+        Promise.all([jobSeekersRef.get(), recruitersRef.get()])
+          .then(([jobSeekersSnapshot, recruitersSnapshot]) => {
+            const jobSeekers = jobSeekersSnapshot.docs.map(doc => ({ UserType: 'Job Seeker', ...doc.data() }));
+            const recruiters = recruitersSnapshot.docs.map(doc => ({ UserType: 'Recruiter', ...doc.data() }));
+            
+            const users = [...jobSeekers, ...recruiters];
+            
+            if (users.length === 0) {
+              showStatus('No user data found', 'info');
+              return;
+            }
+            
+            // Convert data to CSV
+            const fields = [...new Set(users.flatMap(Object.keys))];
+            const csvHeader = fields.join(',') + '\n';
+            const csvData = users.map(user => fields.map(field => user[field]).join(',')).join('\n');
+            const csv = csvHeader + csvData;
+            
+            // Create download link
+            const blob = new Blob([csv], {type: 'text/csv'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `user_data_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showStatus('User data downloaded successfully', 'success');
+          })
+          .catch(error => {
+            showStatus('Error downloading user data: ' + error.message, 'error');
+            console.error('Download error:', error);
+          })
+          .finally(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('downloadBtn').disabled = false;
+          });
+      } 
+
+      function logout() {
+        auth.signOut()
+          .then(() => {
+            window.location.href = 'login.html';
+          })
+          .catch(error => {
+            showStatus('Error signing out: ' + error.message, 'error');
+            console.error('Logout error:', error);
+          });
+      }
+
+      function showStatus(message, type) {
+        const statusElement = document.getElementById('status');
+        statusElement.textContent = message;
+        statusElement.className = 'status ' + type;
+        statusElement.style.display = 'block';
+        
+        // Auto-hide success messages after 5 seconds
+        if (type === 'success') {
+          setTimeout(() => {
+            statusElement.style.display = 'none';
+          }, 5000);
+        }
+      }
+    } catch (error) {
+      showStatus('Firebase initialization failed. Please contact support.', 'error');
+      console.error('Firebase init error:', error);
+    }
+  </script>
+</body>
+</html>

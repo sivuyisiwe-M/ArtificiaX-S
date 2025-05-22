@@ -10,6 +10,7 @@ const firebaseConfig = {
 };
 
 
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
@@ -59,7 +60,7 @@ signupForm.addEventListener('submit', function(e) {
       // Store user data in the appropriate database based on role
       if (role === 'user') {
         // Add to userRegistration
-        database.ref('userRegistration/' + userId).set({
+        database.ref('jobSeekerDB/' + userId).set({
           ...userData,
           skills: [],
           education: [],
@@ -75,7 +76,7 @@ signupForm.addEventListener('submit', function(e) {
         });
       } else if (role === 'recruiter') {
         // Add to employerRegistration
-        database.ref('employerRegistration/' + userId).set({
+        database.ref('recruiterDB/' + userId).set({
           ...userData,
           companyName: "", // These can be filled in later by the user
           contactPerson: fullName,
@@ -122,11 +123,11 @@ loginForm.addEventListener('submit', function(e) {
       
       // Check if user exists in the correct database based on selected role
       if (role === 'user') {
-        database.ref('userRegistration/' + userId).once('value')
+        database.ref('jobSeekerDB/' + userId).once('value')
           .then((snapshot) => {
             if (snapshot.exists()) {
               // Update last login time
-              database.ref('userRegistration/' + userId + '/lastLogin').set(timestamp);
+              database.ref('jobSeekerDB/' + userId + '/lastLogin').set(timestamp);
               window.location.href = 'opportunity.html';
             } else {
               alert("No user record found or incorrect role selected.");
@@ -134,11 +135,11 @@ loginForm.addEventListener('submit', function(e) {
             }
           });
       } else if (role === 'recruiter') {
-        database.ref('employerRegistration/' + userId).once('value')
+        database.ref('recruiterDB/' + userId).once('value')
           .then((snapshot) => {
             if (snapshot.exists()) {
               // Update last login time
-              database.ref('employerRegistration/' + userId + '/lastLogin').set(timestamp);
+              database.ref('recruiterDB/' + userId + '/lastLogin').set(timestamp);
               window.location.href = 'recruiter.html';
             } else {
               alert("No employer record found or incorrect role selected.");

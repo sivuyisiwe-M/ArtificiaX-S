@@ -3,32 +3,733 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu Plug</title>
-    <link rel="stylesheet" href="/source/style.css">
+    <title>Ubuntu Plug - Mentorship</title>
+    <style>
+        :root {
+            --primary-color: #FF6600;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #FF6600, #FF8533);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #FFD700;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            color: var(--dark-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), #FF8533);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+        }
+
+        .mentors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Mentor Card Colors */
+        .mentor-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            background: white;
+        }
+
+        .mentor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .mentor-card.color-1 { border-left: 5px solid #3498db; }
+        .mentor-card.color-2 { border-left: 5px solid #2ecc71; }
+        .mentor-card.color-3 { border-left: 5px solid #9b59b6; }
+        .mentor-card.color-4 { border-left: 5px solid #f39c12; }
+        .mentor-card.color-5 { border-left: 5px solid #e74c3c; }
+        .mentor-card.color-6 { border-left: 5px solid #1abc9c; }
+        .mentor-card.color-7 { border-left: 5px solid #e67e22; }
+        .mentor-card.color-8 { border-left: 5px solid #34495e; }
+
+        .mentor-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        .mentor-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .mentor-field {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .mentor-body {
+            padding: 1.5rem;
+        }
+
+        .mentor-info {
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .info-icon {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .availability-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            background: #e8f4f8;
+            color: #2c3e50;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            border: 1px solid #b8daff;
+        }
+
+        .mentor-actions {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .time-option {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .time-option:hover {
+            background: #e9ecef;
+        }
+
+        .time-option input {
+            margin-right: 0.5rem;
+        }
+
+        .sa-locations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .location-option {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .location-option:hover {
+            background: #e9ecef;
+        }
+
+        .location-option input {
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .mentors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+                padding: 1rem;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
-    
+    <!-- Header Section -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                Ubuntu<span>Plug</span>
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/dev1.html">Home</a></li>
+                <li><a href="/opportunity.html">Opportunities</a></li>
+                <li><a href="/skillup.html">Skill Up</a></li>
+                <li><a href="/dev4.html">Mentorship</a></li>
+                <li><a href="/dev5.html">Community Forum</a></li>
+            </ul>
+        </div>
+    </header>
 
- <!-- Header Section -->
-  <header>
-    <div class="container header-content">
-      <div class="logo">
-        Ubuntu<span>Plug</span>
-      </div>
-      <button class="menu-toggle" id="menuToggle">☰</button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="/dev1.html">Home</a></li>
-        <li><a href="/OPPORTUNITY.html">Opportunities</a></li>
-        <li><a href="/skillup.html">Skill Up</a></li>
-        <li><a href="/dev4.html">Mentorship</a></li>
-        <li><a href="/dev5.html">community forum</a></li>
-        
-      </ul>
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="page-title">
+            <h1>Mentorship Hub</h1>
+            <p>Connect with experienced mentors across South Africa and grow your skills</p>
+        </div>
+
+        <div class="dashboard-header">
+            <h2>Available Mentors</h2>
+            <button id="addMentorBtn" class="btn">Become a Mentor</button>
+        </div>
+
+        <div class="mentors-grid" id="mentorsGrid">
+            <!-- Mentors will be dynamically added here -->
+        </div>
     </div>
-  </header>
-  
 
-<h1> im a mentorship page</h1>
-  
+    <!-- Modal for adding a new mentor -->
+    <div id="mentorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Register as a Mentor</h2>
+                <button class="close" id="closeModal">&times;</button>
+            </div>
+            <form id="mentorForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="field">Field of Mentorship *</label>
+                    <select id="field" class="form-control" required>
+                        <option value="">Select your field</option>
+                        <option value="Software Development">Software Development</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Mobile Development">Mobile Development</option>
+                        <option value="UI/UX Design">UI/UX Design</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="Finance">financial planning</option>
+                        <option value="Digital Marketing">Digital Marketing</option>
+                        <option value="Project Management">Project Management</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                        <option value="Leadership">Public speaking </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="activities">Specific Activities You Will Mentor *</label>
+                    <textarea id="activities" class="form-control" rows="4" required 
+                              placeholder="Describe specific mentorship activities you offer (e.g., code reviews, portfolio building, interview preparation, career guidance)"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" class="form-control" required 
+                               placeholder="e.g., +27 82 123 4567">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Location in South Africa *</label>
+                    <div class="sa-locations">
+                        <label class="location-option">
+                            <input type="radio" name="location" value="Cape Town" required> Cape Town
+                        </label>
+                        <label class="location-option">
+                            <input type="radio" name="location" value="Johannesburg" required> Johannesburg
+                        </label>
+                        <label class="location-option">
+                            <input type="radio" name="location" value="Durban" required> Durban
+                        </label>
+                        <label class="location-option">
+                            <input type="radio" name="location" value="Pretoria" required> Pretoria
+                        </label>
+                        <label class="location-option">
+                            <input type="radio" name="location" value="Port Elizabeth" required> Port Elizabeth
+                        </label>
+                        <label class="location-option">
+                            <input type="radio" name="location" value="Bloemfontein" required> Bloemfontein
+                        </label>
+                        <label class="location-option">
+                            <input type="radio" name="location" value="East London" required> East London
+                        </label>
+                        <label class="location-option">
+                            <input type="radio" name="location" value="Remote/Online" required> Remote/Online
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Available Time Slots (SAST - South African Standard Time)</label>
+                    <div class="time-grid">
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Monday 08:00-11:00"> Mon 08:00-11:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Monday 12:00-15:00"> Mon 12:00-15:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Monday 16:00-19:00"> Mon 16:00-19:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Tuesday 08:00-11:00"> Tue 08:00-11:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Tuesday 12:00-15:00"> Tue 12:00-15:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Tuesday 16:00-19:00"> Tue 16:00-19:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Wednesday 08:00-11:00"> Wed 08:00-11:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Wednesday 12:00-15:00"> Wed 12:00-15:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Wednesday 16:00-19:00"> Wed 16:00-19:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Thursday 08:00-11:00"> Thu 08:00-11:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Thursday 12:00-15:00"> Thu 12:00-15:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Thursday 16:00-19:00"> Thu 16:00-19:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Friday 08:00-11:00"> Fri 08:00-11:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Friday 12:00-15:00"> Fri 12:00-15:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Friday 16:00-19:00"> Fri 16:00-19:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Saturday 09:00-12:00"> Sat 09:00-12:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Saturday 13:00-16:00"> Sat 13:00-16:00
+                        </label>
+                        <label class="time-option">
+                            <input type="checkbox" name="timeSlot" value="Sunday 09:00-12:00"> Sun 09:00-12:00
+                        </label>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn">Register as Mentor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mentor data storage
+        let mentors = [
+            {
+                id: 1,
+                firstName: "Thabo",
+                lastName: "Mthembu",
+                field: "Software Development",
+                activities: "Full-stack web development mentoring, code reviews, portfolio building, and interview preparation. I specialize in React, Node.js, and helping junior developers transition into tech careers.",
+                email: "thabo.mthembu@email.com",
+                phone: "+27 82 123 4567",
+                location: "Johannesburg",
+                timeSlots: ["Monday 16:00-19:00", "Wednesday 16:00-19:00", "Saturday 09:00-12:00"],
+                colorClass: "color-1"
+            },
+            {
+                id: 2,
+                firstName: "Sarah",
+                lastName: "van der Merwe",
+                field: "UI/UX Design",
+                activities: "Design portfolio reviews, user research guidance, Figma training, and design system creation. I help aspiring designers build strong portfolios and land their first design roles.",
+                email: "sarah.vdm@email.com",
+                phone: "+27 83 234 5678",
+                location: "Cape Town",
+                timeSlots: ["Tuesday 12:00-15:00", "Thursday 16:00-19:00", "Sunday 09:00-12:00"],
+                colorClass: "color-2"
+            },
+            {
+                id: 3,
+                firstName: "Nomsa",
+                lastName: "Dlamini",
+                field: "Data Science",
+                activities: "Python programming, machine learning projects, data analysis techniques, and career guidance for data science roles. Specializing in helping newcomers understand complex ML concepts.",
+                email: "nomsa.dlamini@email.com",
+                phone: "+27 84 345 6789",
+                location: "Durban",
+                timeSlots: ["Monday 12:00-15:00", "Wednesday 12:00-15:00", "Friday 16:00-19:00"],
+                colorClass: "color-3"
+            }
+        ];
+
+        // DOM elements
+        const mentorsGrid = document.getElementById('mentorsGrid');
+        const addMentorBtn = document.getElementById('addMentorBtn');
+        const mentorModal = document.getElementById('mentorModal');
+        const closeModal = document.getElementById('closeModal');
+        const mentorForm = document.getElementById('mentorForm');
+
+        // Color classes for mentor cards
+        const colorClasses = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5', 'color-6', 'color-7', 'color-8'];
+
+        // Display mentors
+        function displayMentors() {
+            if (mentors.length === 0) {
+                mentorsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No mentors available yet</h3>
+                        <p>Be the first to register as a mentor and help others grow!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            mentorsGrid.innerHTML = mentors.map(mentor => `
+                <div class="mentor-card ${mentor.colorClass}">
+                    <div class="mentor-header">
+                        <div class="mentor-name">${mentor.firstName} ${mentor.lastName}</div>
+                        <div class="mentor-field">${mentor.field}</div>
+                    </div>
+                    <div class="mentor-body">
+                        <div class="mentor-info">
+                            <div class="info-item">
+                                <span class="info-icon">📧</span>
+                                <span>${mentor.email}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">📱</span>
+                                <span>${mentor.phone}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">📍</span>
+                                <span>${mentor.location}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon">💡</span>
+                                <span>${mentor.activities}</span>
+                            </div>
+                        </div>
+                        
+                        ${mentor.timeSlots.length > 0 ? `
+                            <h4 style="margin-bottom: 0.5rem; color: var(--dark-color);">Available Times (SAST):</h4>
+                            <div class="availability-slots">
+                                ${mentor.timeSlots.map(slot => `<span class="time-slot">${slot}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="mentor-actions">
+                        <button class="btn contact-btn" onclick="contactMentor('${mentor.email}', '${mentor.firstName} ${mentor.lastName}')">
+                            Contact Mentor
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Contact mentor function
+        function contactMentor(email, name) {
+            const subject = encodeURIComponent(`Mentorship Request - Ubuntu Plug`);
+            const body = encodeURIComponent(`Hi ${name},\n\nI found your profile on Ubuntu Plug and I'm interested in your mentorship services.\n\nCould we schedule a time to discuss?\n\nThank you!`);
+            window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+        }
+
+        // Add mentor form submission
+        mentorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(mentorForm);
+            const timeSlots = Array.from(document.querySelectorAll('input[name="timeSlot"]:checked'))
+                .map(checkbox => checkbox.value);
+            
+            const location = document.querySelector('input[name="location"]:checked')?.value;
+            
+            if (!location) {
+                alert('Please select your location.');
+                return;
+            }
+
+            const newMentor = {
+                id: Date.now(),
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                field: formData.get('field'),
+                activities: formData.get('activities'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                location: location,
+                timeSlots: timeSlots,
+                colorClass: colorClasses[mentors.length % colorClasses.length]
+            };
+
+            mentors.push(newMentor);
+            displayMentors();
+            mentorForm.reset();
+            mentorModal.style.display = 'none';
+            
+            alert('Thank you! Your mentorship profile has been registered successfully.');
+        });
+
+        // Modal controls
+        addMentorBtn.addEventListener('click', () => {
+            mentorModal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            mentorModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === mentorModal) {
+                mentorModal.style.display = 'none';
+            }
+        });
+
+        // Initialize
+        displayMentors();
+    </script>
 </body>
 </html>
