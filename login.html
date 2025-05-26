@@ -140,7 +140,7 @@
               .then((doc) => {
                 if (doc.exists) {
                   db.collection(collection).doc(userId).update({ lastLogin: timestamp });
-                  window.location.href = role === 'user' ? 'opportunity.html' : 'recruiter.html';
+                  window.location.href = role === 'user' ? 'dev1.html' : 'recruiter.html';
                 } else {
                   alert("No record found or incorrect role selected.");
                   auth.signOut();
