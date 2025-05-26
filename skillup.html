@@ -1,101 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
-<body>
- 
-  <div id="course-container"></div>
-
-
-
- 
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script>
-    const firebaseConfig = {
-  apiKey: "AIzaSyCeeRzjQMaTEV0xg40jNgQvCYqxaB1iNEA",
-  authDomain: "skill-up-5219f.firebaseapp.com",
-  projectId: "skill-up-5219f",
-  storageBucket: "skill-up-5219f.firebasestorage.app",
-  messagingSenderId: "473313118649",
-  appId: "1:473313118649:web:969cc581db1ac5a8cb0e68",
-  measurementId: "G-LZRGDGRK7S"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = firebase.firestore();
-</script>
-
-
-<script src="/skillup.js"></script>
-</body>
-</html>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu Plug</title>
-    <link rel="stylesheet" href="/source/Dev3.css">
-    <link rel="stylesheet" href="/source/style.css">
-   
-</head>
-
-<body>
-
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Skills Board</title>
-  <link rel="stylesheet" href="style."/>
 </head>
 <body>
-  <!-- <header>
-    
- <h1>🌍 Community Skills Board</h1>
-    <p>Explore or share free/affordable courses and resources</p>
-  </header> -->
-<header>
-   
-  
-    <div class="container header-content">
-      <div class="logo">
-        Ubuntu<span>Plug</span>
-      </div>
-      <button class="menu-toggle" id="menuToggle">☰</button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="/dev1.html">Home</a></li>
-        <li><a href="/opportunity.html">Opportunities</a></li>
-        <li><a href="/skillup.html">Skill Up</a></li>
-        <li><a href="/dev4.html">Mentorship</a></li>
-        <li><a href="/dev5.html">community forum</a></li>
-        
-      </ul>
-    </div>
-  </header>
-  
+
+  <h1>🌍 Community Skills Board</h1>
+
   <section id="courses">
     <h2>📚 Curated Courses</h2>
-    <ul id="courseList">
-     
-    </ul>
-  </section>
-
-  <section id="tutorials">
-    <h2>🛠️ Tutorials</h2>
-    <ul>
-      <li><a href="https://www.freecodecamp.org/">Coding - FreeCodeCamp</a></li>
-      <li><a href="https://novoresume.com/">CV Writing - NovoResume</a></li>
-      <li><a href="https://www.alison.com/">Business Skills - Alison</a></li>
-    </ul>
-  </section>
-
-  <section id="languages">
-    <h2>🗣️ Language Support</h2>
-    <ul>
-      <li><a href="https://www.duolingo.com/course/en/xh">Learn Xhosa (Duolingo)</a></li>
-      <li><a href="https://www.duolingo.com/course/en/zu">Learn Zulu (Duolingo)</a></li>
-      <li><a href="https://www.britishcouncil.org/">Learn English (British Council)</a></li>
-    </ul>
+    <ul id="courseList"></ul>
   </section>
 
   <section id="submit">
@@ -108,10 +24,72 @@ const db = firebase.firestore();
     </form>
   </section>
 
-  <script src="script.js"></script>
+  <!-- Firebase SDK (compat version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeeRzjQMaTEV0xg40jNgQvCYqxaB1iNEA",
+      authDomain: "skill-up-5219f.firebaseapp.com",
+      projectId: "skill-up-5219f",
+      storageBucket: "skill-up-5219f.appspot.com",
+      messagingSenderId: "473313118649",
+      appId: "1:473313118649:web:969cc581db1ac5a8cb0e68",
+      measurementId: "G-LZRGDGRK7S"
+    };
 
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Wait for DOM to load
+    document.addEventListener("DOMContentLoaded", () => {
+      const courseForm = document.getElementById("courseForm");
+      const courseList = document.getElementById("courseList");
+
+      // Submit handler
+      courseForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("title").value.trim();
+        const url = document.getElementById("url").value.trim();
+        const org = document.getElementById("org").value.trim();
+
+        if (!title || !url || !org) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        try {
+          await db.collection("courses").add({ title, url, org });
+          console.log("✅ Course added successfully");
+          courseForm.reset();
+          loadCourses();
+        } catch (error) {
+          console.error("🔥 Error submitting course:", error);
+        }
+      });
+
+      // Load & display courses
+      async function loadCourses() {
+        courseList.innerHTML = "";
+        try {
+          const snapshot = await db.collection("courses").get();
+          snapshot.forEach((doc) => {
+            const course = doc.data();
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="${course.url}" target="_blank">${course.title}</a> – ${course.org}`;
+            courseList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("🔥 Error loading courses:", error);
+        }
+      }
+
+      loadCourses();
+    });
+  </script>
 </body>
-</html> 
+</html>
