@@ -83,51 +83,6 @@
           });
       }
 
-      // function downloadUserData() {
-      //   if (!auth.currentUser) return;
-        
-      //   // Show loading indicator
-      //   document.getElementById('loading').style.display = 'block';
-      //   document.getElementById('downloadBtn').disabled = true;
-        
-      //   // Get user data from Firestore
-      //   const usersRef = firestore.collection('users');
-      //   usersRef.get()
-      //     .then(querySnapshot => {
-      //       const users = querySnapshot.docs.map(doc => doc.data());
-            
-      //       if (users.length === 0) {
-      //         showStatus('No user data found', 'info');
-      //         return;
-      //       }
-            
-      //       // Convert data to CSV
-      //       const csvHeader = Object.keys(users[0]).join(',') + '\n';
-      //       const csvData = users.map(user => Object.values(user).join(',')).join('\n');
-      //       const csv = csvHeader + csvData;
-            
-      //       // Create download link
-      //       const blob = new Blob([csv], {type: 'text/csv'});
-      //       const url = URL.createObjectURL(blob);
-      //       const link = document.createElement('a');
-      //       link.href = url;
-      //       link.download = `user_data_${new Date().toISOString().split('T')[0]}.csv`;
-      //       document.body.appendChild(link);
-      //       link.click();
-      //       document.body.removeChild(link);
-            
-      //       showStatus('User data downloaded successfully', 'success');
-      //     })
-      //     .catch(error => {
-      //       showStatus('Error downloading user data: ' + error.message, 'error');
-      //       console.error('Download error:', error);
-      //     })
-      //     .finally(() => {
-      //       document.getElementById('loading').style.display = 'none';
-      //       document.getElementById('downloadBtn').disabled = false;
-      //     });
-      // }
-      
       function downloadUserData() {
         if (!auth.currentUser) return;
         
