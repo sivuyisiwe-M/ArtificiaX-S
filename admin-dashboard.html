@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -20,7 +20,6 @@
     <div id="loading" class="loading">Processing, please wait...</div>
   </div>
 
-  <!-- Load Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -163,5 +162,217 @@
       console.error('Firebase init error:', error);
     }
   </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <script type="module" src="./firebase.js"></script>
+  <style>
+    body { font-family: Arial; margin: 0; padding: 0; }
+    .sidebar {
+      position: fixed;
+      width: 200px;
+      height: 100%;
+      background: #f59210;
+      color: rgb(22, 22, 22);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-content {
+      margin-left: 220px;
+      padding: 20px;
+    }
+    .application-card {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .approve-btn { background-color: #2ecc71; color: white; }
+    .decline-btn { background-color: #e74c3c; color: white; }
+    .status { font-weight: bold; }
+    .export-btn { background-color: #3498db; color: white; margin-bottom: 20px; }
+    .logout-btn { background-color: #e74c3c; color: white; margin-top: auto; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>Admin Panel</h2>
+  <ul>
+    <li><a href="#"><button class="btn export-btn" id="export-users">Download Registered Users</button></a></li>
+    <li><a href="#"><button class="btn export-btn" id="export-all-users">Download All Users</button></a></li>
+    <!-- <li><a href="#">Mentor Applications</a></li> -->
+  </ul>
+  <button class="btn logout-btn" id="logout-btn">Logout</button>
+</div>
+
+<div class="main-content">
+  <h1>Mentor Applications</h1>
+
+  <div style="margin-bottom: 20px;">
+    <label for="status-filter"><strong>Filter by Status:</strong></label>
+    <select id="status-filter">
+      <option value="all">All</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="declined">Declined</option>
+    </select>
+  </div>
+
+  <div id="dashboard-content">
+    <!-- Mentor applications will load here -->
+  </div>
+</div>
+
+<script type="module">
+  import { db } from './firebase.js';
+  import { collection, getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js';
+  import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js';
+
+  const dashboard = document.getElementById('dashboard-content');
+  const exportBtn = document.getElementById('export-users');
+  const exportAllBtn = document.getElementById('export-all-users');
+  const statusFilter = document.getElementById('status-filter');
+  const logoutBtn = document.getElementById('logout-btn');
+  const auth = getAuth();
+
+  // Load mentor applications
+  async function loadApplications() {
+    const selectedStatus = statusFilter.value;
+    const querySnapshot = await getDocs(collection(db, 'mentorApplications'));
+    dashboard.innerHTML = '';
+
+    let count = 0;
+
+    querySnapshot.forEach(docSnap => {
+      const app = docSnap.data();
+      const id = docSnap.id;
+
+      if (selectedStatus !== 'all' && app.status !== selectedStatus) return;
+
+      const card = document.createElement('div');
+      card.className = 'application-card';
+
+      card.innerHTML = `
+        <h3>${app.fullName}</h3>
+        <p><strong>Field:</strong> ${app.field}</p>
+        <p><strong>Location:</strong> ${app.location}</p>
+        <p><strong>Activities:</strong> ${app.activities}</p>
+        <p><strong>Time Slots:</strong> ${app.timeSlots}</p>
+        <p>Status: <span class="status" id="status-${id}">${app.status}</span></p>
+        <button class="btn approve-btn" onclick="updateStatus('${id}', 'approved')">Approve</button>
+        <button class="btn decline-btn" onclick="updateStatus('${id}', 'declined')">Decline</button>
+      `;
+
+      dashboard.appendChild(card);
+      count++;
+    });
+
+    if (count === 0) {
+      dashboard.innerHTML = '<p>No applications match the selected status.</p>';
+    }
+  }
+
+  // Global function for Approve/Decline
+  window.updateStatus = async function(id, status) {
+    const ref = doc(db, 'mentorApplications', id);
+    await updateDoc(ref, { status });
+    document.getElementById(`status-${id}`).textContent = status;
+    alert(`Application has been ${status}.`);
+    loadApplications(); // reload with filter applied
+  };
+
+  // Export registered users as CSV
+  async function exportRegisteredUsers() {
+    const querySnapshot = await getDocs(collection(db, 'profiles'));
+    const users = [];
+
+    querySnapshot.forEach(docSnap => {
+      const user = docSnap.data();
+      users.push(user);
+    });
+
+    if (users.length === 0) {
+      alert('No users found.');
+      return;
+    }
+
+    const csvHeaders = Object.keys(users[0]).join(',') + '\n';
+    const csvRows = users.map(user => Object.values(user).map(val => `"${val}"`).join(',')).join('\n');
+    const csvContent = csvHeaders + csvRows;
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'registered_users.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Export all users as CSV
+  async function exportAllUsers() {
+    const jobSeekersRef = collection(db, 'jobSeeker');
+    const recruitersRef = collection(db, 'recruiterDB');
+
+    const [jobSeekersSnapshot, recruitersSnapshot] = await Promise.all([getDocs(jobSeekersRef), getDocs(recruitersRef)]);
+
+    const jobSeekers = jobSeekersSnapshot.docs.map(doc => ({ UserType: 'Job Seeker', ...doc.data() }));
+    const recruiters = recruitersSnapshot.docs.map(doc => ({ UserType: 'Recruiter', ...doc.data() }));
+
+    const users = [...jobSeekers, ...recruiters];
+
+    if (users.length === 0) {
+      alert('No users found.');
+      return;
+    }
+
+    const fields = [...new Set(users.flatMap(Object.keys))];
+    const csvHeader = fields.join(',') + '\n';
+    const csvData = users.map(user => fields.map(field => user[field]).join(',')).join('\n');
+    const csvContent = csvHeader + csvData;
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'all_users.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Logout
+  function logout() {
+    signOut(auth).then(() => {
+      window.location.href = 'login.html';
+    }).catch((error) => {
+      console.error('Logout error:', error);
+    });
+  }
+
+  // Filter listener
+  statusFilter.addEventListener('change', loadApplications);
+  exportBtn.addEventListener('click', exportRegisteredUsers);
+  exportAllBtn.addEventListener('click', exportAllUsers);
+  logoutBtn.addEventListener('click', logout);
+
+  loadApplications(); // initial load
+</script>
 </body>
 </html>

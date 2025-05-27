@@ -20,7 +20,7 @@ body::before {
 }
 
 header {
-    background-color: white;
+    background: linear-gradient(135deg, #FF6600, #FF8533);
     color: rgb(25, 165, 72);
     display: flex;
     justify-content: space-between;

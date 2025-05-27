@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skills Board</title>
-
-
-      <style>
-        /* Your CSS styles here */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubuntu Plug - Mentorship</title>
+    <style>
         :root {
             --primary-color: #FF6600;
             --secondary-color: #2ecc71;
@@ -383,9 +380,7 @@
     </style>
 </head>
 <body>
-
-
-      <!-- Header Section -->
+    <!-- Header Section -->
     <header>
         <div class="container header-content">
             <div class="logo">
@@ -402,89 +397,192 @@
         </div>
     </header>
 
-  <h1>🌍 Community Skills Board</h1>
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="page-title">
+            <h1>Mentorship Hub</h1>
+            <p>Connect with experienced mentors across South Africa and grow your skills</p>
+        </div>
 
-  <section id="courses">
-    <h2>📚 Curated Courses</h2>
-    <ul id="courseList"></ul>
-  </section>
+        <div class="dashboard-header">
+            <h2>Available Mentors</h2>
+            <button id="addMentorBtn" class="btn">Become a Mentor</button>
+        </div>
 
-  <section id="submit">
-    <h2>🏢 Submit Your Course</h2>
-    <form id="courseForm">
-      <input type="text" id="title" placeholder="Course Title" required />
-      <input type="url" id="url" placeholder="Course URL" required />
-      <input type="text" id="org" placeholder="Organization Name" required />
-      <button type="submit">Submit</button>
-    </form>
-  </section>
+        <div class="mentors-grid" id="mentorsGrid">
+            <!-- Mentors will be dynamically added here -->
+        </div>
+    </div>
 
-  <!-- Firebase SDK (compat version) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <!-- Modal for adding a new mentor -->
+    <div id="mentorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Register as a Mentor</h2>
+                <button class="close" id="closeModal">&times;</button>
+            </div>
+            <form id="mentorForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="field">Field of Mentorship *</label>
+                        <select id="field" class="form-control" required>
+                            <option value="">Select your field</option>
+                            <option value="Software Development">Software Development</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Mobile Development">Mobile Development</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <option value="DevOps">DevOps</option>
+                            <option value="Finance">Financial Planning</option>
+                            <option value="Digital Marketing">Digital Marketing</option>
+                            <option value="Project Management">Project Management</option>
+                            <option value="Cybersecurity">Cybersecurity</option>
+                            <option value="Leadership">Public Speaking</option>
+                        </select>
+                    </div>
+                </div>
 
-  <script>
-    // Firebase config
+                <div class="form-group">
+                    <label for="activities">Specific Activities You Will Mentor *</label>
+                    <textarea id="activities" class="form-control" rows="4" required 
+                              placeholder="Describe specific mentorship activities you offer (e.g., code reviews, portfolio building, interview preparation, career guidance)"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location in South Africa *</label>
+                        <select id="location" class="form-control" required>
+                            <option value="">Select your location</option>
+                            <option value="Cape Town">Cape Town</option>
+                            <option value="Johannesburg">Johannesburg</option>
+                            <option value="Durban">Durban</option>
+                            <option value="Pretoria">Pretoria</option>
+                            <option value="Port Elizabeth">Port Elizabeth</option>
+                            <option value="Bloemfontein">Bloemfontein</option>
+                            <option value="East London">East London</option>
+                            <option value="Remote/Online">Remote/Online</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeSlots">Available Time Slots (SAST - South African Standard Time)</label>
+                        <input type="datetime-local" id="startTime" name="startTime">
+                        <input type="datetime-local" id="endTime" name="endTime">
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn">Register as Mentor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+    // Initialize Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyCeeRzjQMaTEV0xg40jNgQvCYqxaB1iNEA",
-      authDomain: "skill-up-5219f.firebaseapp.com",
-      projectId: "skill-up-5219f",
-      storageBucket: "skill-up-5219f.appspot.com",
-      messagingSenderId: "473313118649",
-      appId: "1:473313118649:web:969cc581db1ac5a8cb0e68",
-      measurementId: "G-LZRGDGRK7S"
+        apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+        authDomain: "ubuntuplug.firebaseapp.com",
+        databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+        projectId: "ubuntuplug",
+        storageBucket: "ubuntuplug.firebasestorage.app",
+        messagingSenderId: "887406432080",
+        appId: "1:887406432080:web:108e0de9c61d13f418a655",
+        measurementId: "G-2J53SZ2K0N"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Wait for DOM to load
-    document.addEventListener("DOMContentLoaded", () => {
-      const courseForm = document.getElementById("courseForm");
-      const courseList = document.getElementById("courseList");
+        // Get mentors from Firestore
+    // Get mentors from Firestore
+    db.collection("mentorApplications")
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const mentorData = doc.data();
+                const mentorCard = `
+                    <div class="mentor-card">
+                        <div class="mentor-header">
+                            <h2 class="mentor-name">${mentorData.fullName}</h2>
+                            <span class="mentor-field">${mentorData.field}</span>
+                        </div>
+                        <div class="mentor-body">
+                            <div class="mentor-info">
+                                <div class="info-item">
+                                    <span class="info-icon">📧</span>
+                                    ${mentorData.fullName}@email.com
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">📞</span>
+                                    +27 82 123 4567
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">📍</span>
+                                    ${mentorData.location}
+                                </div>
+                            </div>
+                            <p>${mentorData.activities}</p>
+                            <div class="availability-slots">
+                                <h4>Available Times (SAST):</h4>
+                                <span class="time-slot">${mentorData.timeSlots}</span>
+                            </div>
+                        </div>
+                        <div class="mentor-actions">
+                            <button class="btn">Contact Mentor</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById("mentorsGrid").innerHTML += mentorCard;
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting mentor data:", error);
+        });
 
-      // Submit handler
-      courseForm.addEventListener("submit", async (e) => {
+    // Add event listener to mentor form
+    document.getElementById("mentorForm").addEventListener("submit", (e) => {
         e.preventDefault();
+        const fullName = document.getElementById("fullName").value;
+        const field = document.getElementById("field").value;
+        const activities = document.getElementById("activities").value;
+        const location = document.getElementById("location").value;
+        const startTime = document.getElementById("startTime").value;
+        const endTime = document.getElementById("endTime").value;
+        const timeSlots = `${startTime} - ${endTime}`;
 
-        const title = document.getElementById("title").value.trim();
-        const url = document.getElementById("url").value.trim();
-        const org = document.getElementById("org").value.trim();
-
-        if (!title || !url || !org) {
-          alert("Please fill in all fields.");
-          return;
-        }
-
-        try {
-          await db.collection("courses").add({ title, url, org });
-          console.log("✅ Course added successfully");
-          courseForm.reset();
-          loadCourses();
-        } catch (error) {
-          console.error("🔥 Error submitting course:", error);
-        }
-      });
-
-      // Load & display courses
-      async function loadCourses() {
-        courseList.innerHTML = "";
-        try {
-          const snapshot = await db.collection("courses").get();
-          snapshot.forEach((doc) => {
-            const course = doc.data();
-            const li = document.createElement("li");
-            li.innerHTML = `<a href="${course.url}" target="_blank">${course.title}</a> – ${course.org}`;
-            courseList.appendChild(li);
-          });
-        } catch (error) {
-          console.error("🔥 Error loading courses:", error);
-        }
-      }
-
-      loadCourses();
+        // Save mentor application to Firestore
+        db.collection("mentorApplications")
+            .add({
+                fullName: fullName,
+                field: field,
+                activities: activities,
+                location: location,
+                timeSlots: timeSlots,
+                status: "pending"
+            })
+            .then((docRef) => {
+                console.log("Mentor application saved successfully:", docRef.id);
+            })
+            .catch((error) => {
+                console.error("Error saving mentor application:", error);
+            });
     });
-  </script>
+
+    // Add event listener to add mentor button
+    document.getElementById("addMentorBtn").addEventListener("click", () => {
+        document.getElementById("mentorModal").style.display = "block";
+    });
+
+    // Add event listener to close modal button
+    document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("mentorModal").style.display = "none";
+    });
+</script>
 </body>
 </html>

@@ -37,7 +37,7 @@
         
         /* Header Styles */
         header {
-            background-color: var(--white);
+           background: linear-gradient(135deg, #FF6600, #FF8533);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             position: fixed;
             width: 100%;
