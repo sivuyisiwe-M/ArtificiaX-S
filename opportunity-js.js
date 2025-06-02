@@ -131,6 +131,50 @@ async function loadOpportunities() {
 }
 
 // Function to display a single opportunity
+// function displayOpportunity(opp) {
+//   const opportunityElement = document.createElement('div');
+//   opportunityElement.className = 'opportunity-card';
+
+//   // Create category badge
+//   const category = opp.type || 'job';
+//   const badgeClass = getBadgeClass(category);
+
+
+//   // Format deadline if exists
+//   const deadlineDisplay = opp.deadline ? `<div class="deadline">Deadline: ${formatDate(opp.deadline)}</div>` : '';
+
+//   // Display company name from either field
+//   const companyName = opp.company || opp.companyName || 'Company not specified';
+//   const companyLink = opp.companyLink ? `<a href="${opp.companyLink}" target="_blank">Visit Company Website</a>` : '';
+
+//   opportunityElement.innerHTML = `
+//     <div class="opportunity-header">
+//       <span class="badge ${badgeClass}">${capitalizeFirstLetter(category)}</span>
+//       <h3>${opp.title || 'Untitled Opportunity'}</h3>
+//     </div>
+//     <div class="opportunity-details">
+//       <div class="company">${companyName} ${companyLink}</div>
+//       <div class="location">${opp.location || opp.province || 'Location not specified'}</div>
+//       ${deadlineDisplay}
+//       <div class="field">Field: ${opp.field || 'Not specified'}</div>
+//     </div>
+//     <div class="opportunity-description">
+//       ${opp.description ? truncateText(opp.description, 100) : 'No description provided.'}
+//     </div>
+//     <a href="#" class="btn btn-secondary view-details" data-id="${opp.id}">Apply Now</a>
+//   `;
+
+//   // Add event listener to the view details button
+//   const viewDetailsBtn = opportunityElement.querySelector('.view-details');
+//   viewDetailsBtn.addEventListener('click', function(e) {
+//     e.preventDefault();
+//     showOpportunityDetails(opp);
+//   });
+
+//   opportunitiesGrid.appendChild(opportunityElement);
+// }
+
+// Function to display a single opportunity
 function displayOpportunity(opp) {
   const opportunityElement = document.createElement('div');
   opportunityElement.className = 'opportunity-card';
@@ -139,13 +183,12 @@ function displayOpportunity(opp) {
   const category = opp.type || 'job';
   const badgeClass = getBadgeClass(category);
 
-
   // Format deadline if exists
   const deadlineDisplay = opp.deadline ? `<div class="deadline">Deadline: ${formatDate(opp.deadline)}</div>` : '';
 
   // Display company name from either field
   const companyName = opp.company || opp.companyName || 'Company not specified';
-  const companyLink = opp.companyLink ? `<a href="${opp.companyLink}" target="_blank">Visit Company Website</a>` : '';
+  const companyLink = opp.companyLink || '#'; // Use company link or default to #
 
   opportunityElement.innerHTML = `
     <div class="opportunity-header">
@@ -153,7 +196,7 @@ function displayOpportunity(opp) {
       <h3>${opp.title || 'Untitled Opportunity'}</h3>
     </div>
     <div class="opportunity-details">
-      <div class="company">${companyName} ${companyLink}</div>
+      <div class="company">${companyName}</div>
       <div class="location">${opp.location || opp.province || 'Location not specified'}</div>
       ${deadlineDisplay}
       <div class="field">Field: ${opp.field || 'Not specified'}</div>
@@ -161,19 +204,11 @@ function displayOpportunity(opp) {
     <div class="opportunity-description">
       ${opp.description ? truncateText(opp.description, 100) : 'No description provided.'}
     </div>
-    <a href="#" class="btn btn-secondary view-details" data-id="${opp.id}">Apply Now</a>
+    <a href="${companyLink}" target="_blank" class="btn btn-secondary view-details">Apply Now</a>
   `;
-
-  // Add event listener to the view details button
-  const viewDetailsBtn = opportunityElement.querySelector('.view-details');
-  viewDetailsBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    showOpportunityDetails(opp);
-  });
 
   opportunitiesGrid.appendChild(opportunityElement);
 }
-
 // Helper functions
 function capitalizeFirstLetter(string) {
   if (!string) return '';
