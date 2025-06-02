@@ -276,9 +276,13 @@ async function loadOpportunities() {
       });
     });
     
+    console.log(`Loaded ${opportunitiesSnapshot.size} opportunities from opportunities collection`);
+    
     // Load jobs from recruiterDB collection
     const recruitersRef = collection(db, "recruiterDB");
     const recruitersSnapshot = await getDocs(recruitersRef);
+    let jobsFromRecruiters = 0;
+    
     recruitersSnapshot.forEach(recruiterDoc => {
       const recruiterData = recruiterDoc.data();
       if (recruiterData.postedJobs && Object.keys(recruiterData.postedJobs).length > 0) {
@@ -287,13 +291,17 @@ async function loadOpportunities() {
             id: jobId,
             ...jobData,
             recruiterID: recruiterDoc.id,
-            companyName: recruiterData.companyName || recruiterData.company || "Unknown Company",
+            companyName: recruiterData.companyName || recruiterData.company || jobData.companyName || jobData.company || "Unknown Company",
             type: jobData.type || 'job'
           };
           allOpportunities.push(job);
+          jobsFromRecruiters++;
         });
       }
     });
+    
+    console.log(`Loaded ${jobsFromRecruiters} jobs from recruiterDB collection`);
+    console.log(`Total opportunities loaded: ${allOpportunities.length}`);
     
     // Apply filters
     let filteredOpportunities = allOpportunities;
@@ -345,10 +353,20 @@ async function loadOpportunities() {
     if (filteredOpportunities.length === 0) {
       opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities found. Try adjusting your filters.</p>';
     } else {
+      // Sort by most recent first
+      filteredOpportunities.sort((a, b) => {
+        const dateA = new Date(a.postedAt || 0);
+        const dateB = new Date(b.postedAt || 0);
+        return dateB - dateA;
+      });
+      
       filteredOpportunities.forEach(opp => {
         displayOpportunity(opp);
       });
     }
+    
+    console.log(`Displaying ${filteredOpportunities.length} filtered opportunities`);
+    
   } catch (error) {
     console.error("Error in loadOpportunities:", error);
     opportunitiesGrid.innerHTML = '<p class="error">Error loading opportunities. Please try again later.</p>';
@@ -359,38 +377,41 @@ async function loadOpportunities() {
 function displayOpportunity(opp) {
   const opportunityElement = document.createElement('div');
   opportunityElement.className = 'opportunity-card';
-
+  
   // Create category badge
   const category = opp.type || 'job';
   const badgeClass = getBadgeClass(category);
-
+  
   // Format deadline if exists
   const deadlineDisplay = opp.deadline ? `<div class="deadline">Deadline: ${formatDate(opp.deadline)}</div>` : '';
-
+  
   // Display company name from either field
   const companyName = opp.company || opp.companyName || 'Company not specified';
-  const website = opp.website || '';
-
+  
   opportunityElement.innerHTML = `
-      <div class="opportunity-header">
-        <span class="badge ${badgeClass}">${capitalizeFirstLetter(category)}</span>
-        <h3>${opp.title || 'Untitled Opportunity'}</h3>
-      </div>
-      <div class="opportunity-details">
-        <div class="company">${companyName}</div>
-        <div class="location">${opp.location || opp.province || 'Location not specified'}</div>
-        ${deadlineDisplay}
-        <div class="field">Field: ${opp.field || 'Not specified'}</div>
-      </div>
-      <div class="opportunity-description">
-        ${opp.description ? truncateText(opp.description, 100) : 'No description provided.'}
-      </div>
-      <div class="apply-section">
-        <a href="${website || '#'}" target="_blank" class="btn apply-btn" style="background-color: green; color: white; padding: 5px 10px; font-size: 14px;">Apply Now</a>
-        ${website ? `<p>Website: <a href="${website}" target="_blank">${website}</a></p>` : ''}
-      </div>
-    `;
-
+    <div class="opportunity-header">
+      <span class="badge ${badgeClass}">${capitalizeFirstLetter(category)}</span>
+      <h3>${opp.title || 'Untitled Opportunity'}</h3>
+    </div>
+    <div class="opportunity-details">
+      <div class="company">${companyName}</div>
+      <div class="location">${opp.location || opp.province || 'Location not specified'}</div>
+      ${deadlineDisplay}
+      <div class="field">Field: ${opp.field || 'Not specified'}</div>
+    </div>
+    <div class="opportunity-description">
+      ${opp.description ? truncateText(opp.description, 100) : 'No description provided.'}
+    </div>
+    <a href="#" class="btn btn-secondary view-details" data-id="${opp.id}">View Details</a>
+  `;
+  
+  // Add event listener to the view details button
+  const viewDetailsBtn = opportunityElement.querySelector('.view-details');
+  viewDetailsBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    showOpportunityDetails(opp);
+  });
+  
   opportunitiesGrid.appendChild(opportunityElement);
 }
 
@@ -430,6 +451,24 @@ function getBadgeClass(category) {
   }
 }
 
+function showOpportunityDetails(opp) {
+  // Log the opportunity being viewed
+  console.log('Viewing details for:', opp);
+  
+  // Example: Display in alert (replace with modal or redirect to details page)
+  const details = `
+    Title: ${opp.title || 'No title'}
+    Company: ${opp.company || opp.companyName || 'No company'}
+    Location: ${opp.location || opp.province || 'Location not specified'}
+    Type: ${opp.type || 'Not specified'}
+    Field: ${opp.field || 'Not specified'}
+    Deadline: ${opp.deadline || 'Not specified'}
+    Description: ${opp.description || 'No description'}
+  `;
+  
+  alert(details);
+}
+
 // Set up event listeners for filters
 if (opportunityTypeFilter) {
   opportunityTypeFilter.addEventListener('change', loadOpportunities);
@@ -447,6 +486,35 @@ if (searchInput) {
   searchInput.addEventListener('input', debounce(loadOpportunities, 300));
 }
 
+// Listen for job posted events from other pages
+window.addEventListener('jobPosted', function(e) {
+  console.log('Job posted event received:', e.detail);
+  // Reload opportunities when a new job is posted
+  loadOpportunities();
+});
+
+// Listen for page visibility changes to reload when user returns to tab
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    console.log('Page became visible, refreshing opportunities...');
+    loadOpportunities();
+  }
+});
+
+// Add a refresh button functionality
+function addRefreshButton() {
+  const refreshButton = document.createElement('button');
+  refreshButton.textContent = 'Refresh Opportunities';
+  refreshButton.className = 'btn btn-primary refresh-btn';
+  refreshButton.style.marginBottom = '20px';
+  refreshButton.addEventListener('click', loadOpportunities);
+  
+  // Insert before the opportunities grid
+  if (opportunitiesGrid && opportunitiesGrid.parentNode) {
+    opportunitiesGrid.parentNode.insertBefore(refreshButton, opportunitiesGrid);
+  }
+}
+
 // Debounce function
 function debounce(func, delay) {
   let debounceTimer;
@@ -458,6 +526,13 @@ function debounce(func, delay) {
   };
 }
 
-// Load opportunities on page load
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Opportunity page loaded, adding refresh button and loading opportunities");
+  addRefreshButton();
+  loadOpportunities();
+});
+
+// Also load on page load for immediate execution
 console.log("Initial load of opportunities");
 loadOpportunities();

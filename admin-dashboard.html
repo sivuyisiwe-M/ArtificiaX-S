@@ -165,214 +165,807 @@
 </body>
 </html> -->
 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
-  <script type="module" src="./firebase.js"></script>
   <style>
-    body { font-family: Arial; margin: 0; padding: 0; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #f59210, #ff6b35);
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .user-info {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-top: 0.5rem;
+    }
+
     .sidebar {
       position: fixed;
-      width: 200px;
-      height: 100%;
-      background: #f59210;
-      color: rgb(22, 22, 22);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
+      top: 80px;
+      left: 0;
+      width: 280px;
+      height: calc(100vh - 80px);
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding: 2rem;
+      overflow-y: auto;
     }
+
+    .sidebar h2 {
+      color: #f59210;
+      margin-bottom: 2rem;
+      font-size: 1.4rem;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar li {
+      margin-bottom: 1rem;
+    }
+
     .main-content {
-      margin-left: 220px;
-      padding: 20px;
+      margin-left: 280px;
+      margin-top: 80px;
+      padding: 2rem;
+      min-height: calc(100vh - 80px);
     }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #f59210;
+      display: block;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .filters-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
     .application-card {
-      border: 1px solid #ddd;
-      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .application-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .application-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .application-header h3 {
+      color: #333;
+      font-size: 1.3rem;
+    }
+
+    .status-badge {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-declined {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .application-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-item {
+      padding: 0.8rem;
+      background: #f8f9fa;
       border-radius: 8px;
-      margin-bottom: 15px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border-left: 4px solid #f59210;
     }
+
+    .detail-label {
+      font-weight: 600;
+      color: #666;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+      color: #333;
+    }
+
     .btn {
-      padding: 8px 12px;
+      padding: 0.75rem 1.5rem;
       border: none;
-      border-radius: 5px;
-      margin-right: 10px;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
     }
-    .approve-btn { background-color: #2ecc71; color: white; }
-    .decline-btn { background-color: #e74c3c; color: white; }
-    .status { font-weight: bold; }
-    .export-btn { background-color: #3498db; color: white; margin-bottom: 20px; }
-    .logout-btn { background-color: #e74c3c; color: white; margin-top: auto; }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .approve-btn {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+    }
+
+    .decline-btn {
+      background: linear-gradient(135deg, #dc3545, #e74c3c);
+      color: white;
+    }
+
+    .export-btn {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    select, input {
+      padding: 0.75rem;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s ease;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #f59210;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #f59210;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .notification {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 1100;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      background: #28a745;
+    }
+
+    .notification.error {
+      background: #dc3545;
+    }
+
+    .notification.info {
+      background: #007bff;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .header {
+        padding: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .application-details {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-
-<div class="sidebar">
-  <h2>Admin Panel</h2>
-  <ul>
-    <li><a href="#"><button class="btn export-btn" id="export-users">Download Registered Users</button></a></li>
-    <li><a href="#"><button class="btn export-btn" id="export-all-users">Download All Users</button></a></li>
-    <!-- <li><a href="#">Mentor Applications</a></li> -->
-  </ul>
-  <button class="btn logout-btn" id="logout-btn">Logout</button>
-</div>
-
-<div class="main-content">
-  <h1>Mentor Applications</h1>
-
-  <div style="margin-bottom: 20px;">
-    <label for="status-filter"><strong>Filter by Status:</strong></label>
-    <select id="status-filter">
-      <option value="all">All</option>
-      <option value="pending">Pending</option>
-      <option value="approved">Approved</option>
-      <option value="declined">Declined</option>
-    </select>
+  <div class="header">
+    <h1>Ubuntu Plug Admin Dashboard</h1>
+    <div class="user-info" id="user-info">Loading...</div>
   </div>
 
-  <div id="dashboard-content">
-    <!-- Mentor applications will load here -->
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <ul>
+      <li>
+        <button class="btn export-btn" id="export-users">
+          📊 Download Registered Users
+        </button>
+      </li>
+      <li>
+        <button class="btn export-btn" id="export-all-users">
+          📈 Download All Users
+        </button>
+      </li>
+      <li>
+        <button class="btn export-btn" id="export-applications">
+          📋 Export Applications
+        </button>
+      </li>
+    </ul>
+    <button class="btn logout-btn" id="logout-btn">
+      🚪 Logout
+    </button>
   </div>
-</div>
 
-<script type="module">
-  import { db } from './firebase.js';
-  import { collection, getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js';
-  import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js';
+  <div class="main-content">
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number" id="total-applications">-</span>
+        <div class="stat-label">Total Applications</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="pending-applications">-</span>
+        <div class="stat-label">Pending Review</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="approved-applications">-</span>
+        <div class="stat-label">Approved</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="declined-applications">-</span>
+        <div class="stat-label">Declined</div>
+      </div>
+    </div>
 
-  const dashboard = document.getElementById('dashboard-content');
-  const exportBtn = document.getElementById('export-users');
-  const exportAllBtn = document.getElementById('export-all-users');
-  const statusFilter = document.getElementById('status-filter');
-  const logoutBtn = document.getElementById('logout-btn');
-  const auth = getAuth();
+    <div class="filters-section">
+      <label for="status-filter"><strong>Filter by Status:</strong></label>
+      <select id="status-filter">
+        <option value="all">All Applications</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="declined">Declined</option>
+      </select>
+      
+      <label for="field-filter"><strong>Filter by Field:</strong></label>
+      <select id="field-filter">
+        <option value="all">All Fields</option>
+      </select>
+      
+      <input type="text" id="search-input" placeholder="Search by name..." />
+    </div>
 
-  // Load mentor applications
-  async function loadApplications() {
-    const selectedStatus = statusFilter.value;
-    const querySnapshot = await getDocs(collection(db, 'mentorApplications'));
-    dashboard.innerHTML = '';
+    <div id="dashboard-content">
+      <div class="loading">
+        <div class="spinner"></div>
+        Loading mentor applications...
+      </div>
+    </div>
+  </div>
 
-    let count = 0;
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore-compat.js"></script>
 
-    querySnapshot.forEach(docSnap => {
-      const app = docSnap.data();
-      const id = docSnap.id;
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+      authDomain: "ubuntuplug.firebaseapp.com",
+      databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+      projectId: "ubuntuplug",
+      storageBucket: "ubuntuplug.firebasestorage.app",
+      messagingSenderId: "887406432080",
+      appId: "1:887406432080:web:108e0de9c61d13f418a655",
+      measurementId: "G-2J53SZ2K0N"
+    };
 
-      if (selectedStatus !== 'all' && app.status !== selectedStatus) return;
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const firestore = firebase.firestore();
 
-      const card = document.createElement('div');
-      card.className = 'application-card';
+    // Global variables
+    let applications = [];
+    let filteredApplications = [];
+    let currentUser = null;
 
-      card.innerHTML = `
-        <h3>${app.fullName}</h3>
-        <p><strong>Field:</strong> ${app.field}</p>
-        <p><strong>Location:</strong> ${app.location}</p>
-        <p><strong>Activities:</strong> ${app.activities}</p>
-        <p><strong>Time Slots:</strong> ${app.timeSlots}</p>
-        <p>Status: <span class="status" id="status-${id}">${app.status}</span></p>
-        <button class="btn approve-btn" onclick="updateStatus('${id}', 'approved')">Approve</button>
-        <button class="btn decline-btn" onclick="updateStatus('${id}', 'declined')">Decline</button>
-      `;
+    // DOM elements
+    const dashboard = document.getElementById('dashboard-content');
+    const statusFilter = document.getElementById('status-filter');
+    const fieldFilter = document.getElementById('field-filter');
+    const searchInput = document.getElementById('search-input');
+    const userInfo = document.getElementById('user-info');
 
-      dashboard.appendChild(card);
-      count++;
-    });
+    // Authentication handler
+    auth.onAuthStateChanged(handleAuthStateChange);
 
-    if (count === 0) {
-      dashboard.innerHTML = '<p>No applications match the selected status.</p>';
-    }
-  }
-
-  // Global function for Approve/Decline
-  window.updateStatus = async function(id, status) {
-    const ref = doc(db, 'mentorApplications', id);
-    await updateDoc(ref, { status });
-    document.getElementById(`status-${id}`).textContent = status;
-    alert(`Application has been ${status}.`);
-    loadApplications(); // reload with filter applied
-  };
-
-  // Export registered users as CSV
-  async function exportRegisteredUsers() {
-    const querySnapshot = await getDocs(collection(db, 'profiles'));
-    const users = [];
-
-    querySnapshot.forEach(docSnap => {
-      const user = docSnap.data();
-      users.push(user);
-    });
-
-    if (users.length === 0) {
-      alert('No users found.');
-      return;
-    }
-
-    const csvHeaders = Object.keys(users[0]).join(',') + '\n';
-    const csvRows = users.map(user => Object.values(user).map(val => `"${val}"`).join(',')).join('\n');
-    const csvContent = csvHeaders + csvRows;
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'registered_users.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  // Export all users as CSV
-  async function exportAllUsers() {
-    const jobSeekersRef = collection(db, 'jobSeeker');
-    const recruitersRef = collection(db, 'recruiterDB');
-
-    const [jobSeekersSnapshot, recruitersSnapshot] = await Promise.all([getDocs(jobSeekersRef), getDocs(recruitersRef)]);
-
-    const jobSeekers = jobSeekersSnapshot.docs.map(doc => ({ UserType: 'Job Seeker', ...doc.data() }));
-    const recruiters = recruitersSnapshot.docs.map(doc => ({ UserType: 'Recruiter', ...doc.data() }));
-
-    const users = [...jobSeekers, ...recruiters];
-
-    if (users.length === 0) {
-      alert('No users found.');
-      return;
+    function handleAuthStateChange(user) {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      currentUser = user;
+      verifyAdminStatus(user);
     }
 
-    const fields = [...new Set(users.flatMap(Object.keys))];
-    const csvHeader = fields.join(',') + '\n';
-    const csvData = users.map(user => fields.map(field => user[field]).join(',')).join('\n');
-    const csvContent = csvHeader + csvData;
+    function verifyAdminStatus(user) {
+      const uid = user.uid;
+      firestore.collection('admin').doc(uid).get()
+        .then((doc) => {
+          if (!doc.exists || doc.data().role !== 'admin') {
+            showNotification('Access denied. Admin privileges required.', 'error');
+            setTimeout(() => {
+              auth.signOut();
+              window.location.href = 'login.html';
+            }, 2000);
+            return;
+          }
+          
+          // Admin verified, update UI
+          userInfo.innerHTML = `Welcome, Admin ${user.email || user.displayName || 'User'}`;
+          
+          // Load dashboard data
+          loadApplications();
+        })
+        .catch(error => {
+          showNotification('Error verifying admin status. Please try again.', 'error');
+          console.error('Admin verification error:', error);
+        });
+    }
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
+    async function loadApplications() {
+      try {
+        showLoading(true);
+        const querySnapshot = await firestore.collection('mentorApplications').get();
+        
+        applications = [];
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          applications.push({
+            id: doc.id,
+            ...data,
+            status: data.status || 'pending'
+          });
+        });
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'all_users.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+        updateStats();
+        populateFieldFilter();
+        filterApplications();
+        showLoading(false);
+        
+      } catch (error) {
+        console.error('Error loading applications:', error);
+        showNotification('Error loading applications: ' + error.message, 'error');
+        showLoading(false);
+      }
+    }
 
-  // Logout
-  function logout() {
-    signOut(auth).then(() => {
-      window.location.href = 'login.html';
-    }).catch((error) => {
-      console.error('Logout error:', error);
+    function updateStats() {
+      const total = applications.length;
+      const pending = applications.filter(app => app.status === 'pending').length;
+      const approved = applications.filter(app => app.status === 'approved').length;
+      const declined = applications.filter(app => app.status === 'declined').length;
+
+      document.getElementById('total-applications').textContent = total;
+      document.getElementById('pending-applications').textContent = pending;
+      document.getElementById('approved-applications').textContent = approved;
+      document.getElementById('declined-applications').textContent = declined;
+    }
+
+    function populateFieldFilter() {
+      const fields = [...new Set(applications.map(app => app.field).filter(Boolean))];
+      fieldFilter.innerHTML = '<option value="all">All Fields</option>';
+      fields.forEach(field => {
+        const option = document.createElement('option');
+        option.value = field;
+        option.textContent = field;
+        fieldFilter.appendChild(option);
+      });
+    }
+
+    function filterApplications() {
+      const selectedStatus = statusFilter.value;
+      const selectedField = fieldFilter.value;
+      const searchTerm = searchInput.value.toLowerCase();
+
+      filteredApplications = applications.filter(app => {
+        const matchesStatus = selectedStatus === 'all' || app.status === selectedStatus;
+        const matchesField = selectedField === 'all' || app.field === selectedField;
+        const matchesSearch = !searchTerm || 
+                            (app.fullName && app.fullName.toLowerCase().includes(searchTerm)) ||
+                            (app.field && app.field.toLowerCase().includes(searchTerm)) ||
+                            (app.location && app.location.toLowerCase().includes(searchTerm));
+        
+        return matchesStatus && matchesField && matchesSearch;
+      });
+
+      renderApplications();
+    }
+
+    function renderApplications() {
+      if (filteredApplications.length === 0) {
+        dashboard.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No applications found</h3>
+            <p>Try adjusting your filters or search criteria.</p>
+          </div>
+        `;
+        return;
+      }
+
+      dashboard.innerHTML = filteredApplications.map(app => `
+        <div class="application-card">
+          <div class="application-header">
+            <h3>${app.fullName || 'Unknown Name'}</h3>
+            <div class="status-badge status-${app.status}">${app.status}</div>
+          </div>
+          
+          <div class="application-details">
+            <div class="detail-item">
+              <div class="detail-label">Field</div>
+              <div class="detail-value">${app.field || 'Not specified'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Location</div>
+              <div class="detail-value">${app.location || 'Not specified'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Email</div>
+              <div class="detail-value">${app.email || 'Not provided'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Experience</div>
+              <div class="detail-value">${app.experience || 'Not specified'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Activities</div>
+              <div class="detail-value">${app.activities || 'Not specified'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Time Slots</div>
+              <div class="detail-value">${app.timeSlots || 'Not specified'}</div>
+            </div>
+          </div>
+          
+          <div>
+            <button class="btn approve-btn" onclick="updateStatus('${app.id}', 'approved')" 
+                    ${app.status === 'approved' ? 'disabled' : ''}>
+              ✅ Approve
+            </button>
+            <button class="btn decline-btn" onclick="updateStatus('${app.id}', 'declined')"
+                    ${app.status === 'declined' ? 'disabled' : ''}>
+              ❌ Decline
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        const ref = firestore.collection('mentorApplications').doc(id);
+        await ref.update({ status: status });
+        
+        // Update local data
+        const appIndex = applications.findIndex(app => app.id === id);
+        if (appIndex !== -1) {
+          applications[appIndex].status = status;
+          updateStats();
+          filterApplications();
+        }
+        
+        showNotification(`Application has been ${status}.`, 'success');
+        
+      } catch (error) {
+        console.error('Error updating status:', error);
+        showNotification('Error updating application status: ' + error.message, 'error');
+      }
+    }
+
+    async function exportRegisteredUsers() {
+      try {
+        const querySnapshot = await firestore.collection('profiles').get();
+        const users = [];
+
+        querySnapshot.forEach(doc => {
+          users.push(doc.data());
+        });
+
+        if (users.length === 0) {
+          showNotification('No registered users found.', 'info');
+          return;
+        }
+
+        exportToCSV(users, 'registered_users.csv');
+        showNotification('Registered users data exported successfully.', 'success');
+        
+      } catch (error) {
+        console.error('Error exporting registered users:', error);
+        showNotification('Error exporting registered users: ' + error.message, 'error');
+      }
+    }
+
+    async function exportAllUsers() {
+      try {
+        const jobSeekersRef = firestore.collection('jobSeeker');
+        const recruitersRef = firestore.collection('recruiterDB');
+
+        const [jobSeekersSnapshot, recruitersSnapshot] = await Promise.all([
+          jobSeekersRef.get(),
+          recruitersRef.get()
+        ]);
+
+        const jobSeekers = jobSeekersSnapshot.docs.map(doc => ({ 
+          UserType: 'Job Seeker', 
+          ...doc.data() 
+        }));
+        const recruiters = recruitersSnapshot.docs.map(doc => ({ 
+          UserType: 'Recruiter', 
+          ...doc.data() 
+        }));
+
+        const users = [...jobSeekers, ...recruiters];
+
+        if (users.length === 0) {
+          showNotification('No users found.', 'info');
+          return;
+        }
+
+        const fields = [...new Set(users.flatMap(Object.keys))];
+        const csvHeader = fields.join(',') + '\n';
+        const csvData = users.map(user => 
+          fields.map(field => `"${user[field] || ''}"`).join(',')
+        ).join('\n');
+        const csvContent = csvHeader + csvData;
+
+        downloadCSV(csvContent, 'all_users.csv');
+        showNotification('All users data exported successfully.', 'success');
+        
+      } catch (error) {
+        console.error('Error exporting all users:', error);
+        showNotification('Error exporting all users: ' + error.message, 'error');
+      }
+    }
+
+    function exportToCSV(data, filename) {
+      if (data.length === 0) {
+        showNotification('No data to export.', 'info');
+        return;
+      }
+
+      const fields = Object.keys(data[0]);
+      const csvHeader = fields.join(',') + '\n';
+      const csvData = data.map(item => 
+        fields.map(field => `"${item[field] || ''}"`).join(',')
+      ).join('\n');
+      const csvContent = csvHeader + csvData;
+
+      downloadCSV(csvContent, filename);
+    }
+
+    function downloadCSV(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function showLoading(show) {
+      if (show) {
+        dashboard.innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            Loading mentor applications...
+          </div>
+        `;
+      }
+    }
+
+    function showNotification(message, type) {
+      // Remove existing notifications
+      const existingNotification = document.querySelector('.notification');
+      if (existingNotification) {
+        existingNotification.remove();
+      }
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      // Show notification
+      setTimeout(() => notification.classList.add('show'), 100);
+
+      // Hide notification after 5 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 5000);
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        auth.signOut()
+          .then(() => {
+            window.location.href = 'login.html';
+          })
+          .catch(error => {
+            showNotification('Error signing out: ' + error.message, 'error');
+            console.error('Logout error:', error);
+          });
+      }
+    }
+
+    // Event listeners
+    statusFilter.addEventListener('change', filterApplications);
+    fieldFilter.addEventListener('change', filterApplications);
+    searchInput.addEventListener('input', filterApplications);
+
+    document.getElementById('export-applications').addEventListener('click', () => {
+      exportToCSV(filteredApplications, 'mentor_applications.csv');
     });
-  }
 
-  // Filter listener
-  statusFilter.addEventListener('change', loadApplications);
-  exportBtn.addEventListener('click', exportRegisteredUsers);
-  exportAllBtn.addEventListener('click', exportAllUsers);
-  logoutBtn.addEventListener('click', logout);
+    document.getElementById('export-users').addEventListener('click', exportRegisteredUsers);
+    document.getElementById('export-all-users').addEventListener('click', exportAllUsers);
+    document.getElementById('logout-btn').addEventListener('click', logout);
 
-  loadApplications(); // initial load
-</script>
+    // Make updateStatus available globally
+    window.updateStatus = updateStatus;
+  </script>
 </body>
 </html>
