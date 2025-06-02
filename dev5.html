@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UbuntuPlug - Connect & Collaborate</title>
-<link rel="stylesheet" href="/source/Dev5.css">
+    <link rel="stylesheet" href="/source/Dev5.css">
 </head>
 <body>
     <div class="container">
@@ -21,26 +21,26 @@
                 <!-- Shared files will be populated here -->
             </div>
 
-        <div class="online-users">
-            <h3>👥 Online Users</h3>
-            <div id="online-users-list">
-                <!-- Online users will be populated here -->
-            </div>
+            <div class="online-users">
+                <h3>👥 Online Users</h3>
+                <div id="online-users-list">
+                    <!-- Online users will be populated here -->
+                </div>
 
-            <h3>📈 Stats</h3>
-            <div id="chat-stats">
-                <p>Messages today: <span id="messages-count">0</span></p>
-                <p>Files shared: <span id="files-count">0</span></p>
-                <p>Total users: <span id="users-count">0</span></p>
+                <h3>📈 Stats</h3>
+                <div id="chat-stats">
+                    <p>Messages today: <span id="messages-count">0</span></p>
+                    <p>Files shared: <span id="files-count">0</span></p>
+                    <p>Total users: <span id="users-count">0</span></p>
+                </div>
             </div>
-        </div>
-
         </div>
 
         <div class="main-chat">
             <div class="chat-header">
                 <h2>🌐 UbuntuPlug Community</h2>
                 <p>Connect, Share, Collaborate</p>
+                <p id="user-greeting">Welcome, <span id="current-user-name">Anonymous</span>!</p>
             </div>
 
             <div class="chat-messages" id="chat-messages">
@@ -80,7 +80,7 @@
     <!-- Invite User Modal -->
     <div class="modal" id="invite-modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('invite-modal')">&times;</span>
+            <span class="close-modal" onclick="closeModal('invite-modal')">×</span>
             <h3>Invite User</h3>
             <form id="invite-form">
                 <div class="form-group">
@@ -99,7 +99,7 @@
     <!-- User Management Modal -->
     <div class="modal" id="user-management-modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('user-management-modal')">&times;</span>
+            <span class="close-modal" onclick="closeModal('user-management-modal')">×</span>
             <h3>User Management</h3>
             <div class="form-group">
                 <label for="new-username">Add New User:</label>
@@ -118,7 +118,7 @@
     <!-- File Upload Modal -->
     <div class="modal" id="file-modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('file-modal')">&times;</span>
+            <span class="close-modal" onclick="closeModal('file-modal')">×</span>
             <h3>Share File</h3>
             <form id="file-form">
                 <div class="form-group">
@@ -174,20 +174,32 @@
             measurementId: "G-2J53SZ2K0N"
         };
 
+        // Check if user is logged in, redirect to login if not
+        if (!localStorage.getItem("fullName")) {
+            window.location.href = 'login.html';
+        }        
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const storage = getStorage(app);
 
         // Global variables
-        let currentUser = prompt("Enter your username:") || "Anonymous";
+        let currentUser = (localStorage.getItem("fullName") || "Anonymous").replace(/\s+/g, '_');
         let currentPostType = "message";
         let messagesCount = 0;
         let filesCount = 0;
         let usersCount = 0;
 
         // Collection references
-        const USERS_COLLECTION_PATH = 'chatAppForum/eU1CHhEJ55sYgUHatkpi/users';
+        const USERS_COLLECTION_PATH = 'userStatus';
+
+        // Display the logged-in user's full name in the header
+        const displayUserName = () => {
+            const userNameElement = document.getElementById('current-user-name');
+            if (userNameElement) {
+                userNameElement.textContent = currentUser;
+            }
+        };
 
         // Add user to Firestore
         const addUserToFirestore = async (username) => {
@@ -275,6 +287,7 @@
             loadOnlineUsers();
             loadUsers();
             setupEventListeners();
+            displayUserName(); // Call to display the user's full name
             
             // Update user status on page unload
             window.addEventListener('beforeunload', () => {
@@ -312,28 +325,37 @@
         };
 
         // Load online users
+        // Load online users
         const loadOnlineUsers = () => {
-            const usersRef = collection(db, USERS_COLLECTION_PATH);
+            const usersRef = collection(db, "userStatus");
             onSnapshot(usersRef, (querySnapshot) => {
                 const onlineUsersContainer = document.getElementById("online-users-list");
-                onlineUsersContainer.innerHTML = '';
+                const users = new Map();
 
                 querySnapshot.forEach((doc) => {
                     const user = doc.data();
+                    const username = user.username;
+
+                    if (!users.has(username) || users.get(username).timestamp < user.timestamp) {
+                        users.set(username, user);
+                    }
+                });
+
+                onlineUsersContainer.innerHTML = '';
+                users.forEach((user) => {
                     const isOnline = user.status === 'online' && 
-                                   (Date.now() - user.lastSeen?.toDate()?.getTime() < 60000);
+                                    (Date.now() - user.timestamp?.toDate()?.getTime() < 60000); // 60 seconds timeout
                     
                     const userDiv = document.createElement('div');
                     userDiv.className = 'user-item';
                     userDiv.innerHTML = `
-                        <div class="status-indicator ${isOnline ? '' : 'offline'}"></div>
+                        <div class="${isOnline ? 'status-indicator' : 'status-indicator offline'}"></div>
                         <span>${user.username}</span>
                     `;
                     onlineUsersContainer.appendChild(userDiv);
                 });
             });
         };
-
         // Display message
         const displayMessage = (message) => {
             const messagesContainer = document.getElementById("chat-messages");
@@ -619,7 +641,6 @@
         // Clear chat
         window.clearChat = () => {
             if (confirm("Are you sure you want to clear the chat? This action cannot be undone.")) {
-                // Note: In a real app, you'd want to implement proper clearing logic
                 showNotification('Chat cleared!');
             }
         };
@@ -662,7 +683,6 @@
                 const email = document.getElementById('invite-email').value;
                 const message = document.getElementById('invite-message').value;
                 
-                // In a real app, you'd send an actual invitation
                 showNotification(`Invitation sent to ${email}!`);
                 closeModal('invite-modal');
                 e.target.reset();
