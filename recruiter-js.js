@@ -174,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const type = document.getElementById('opportunity-type').value;
       const field = document.getElementById('field').value;
       const deadline = document.getElementById('closing-date').value;
+      const companyLink = document.getElementById('company-link').value;
+      
       
       // Create job object
       const newJob = {
@@ -185,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         type,
         field,
         deadline,
+        companyLink,
         postedAt: new Date().toISOString(),
         status: 'active'
       };
