@@ -1,5 +1,7 @@
 
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,6 +89,7 @@
       measurementId: "G-2J53SZ2K0N"
     };
 
+    
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -139,6 +142,8 @@
             db.collection(collection).doc(userId).get()
               .then((doc) => {
                 if (doc.exists) {
+                  const userData = doc.data();
+                  localStorage.setItem("fullName", userData.fullName);
                   db.collection(collection).doc(userId).update({ lastLogin: timestamp });
                   window.location.href = role === 'user' ? 'opportunity.html' : 'recruiter.html';
                 } else {
@@ -231,6 +236,7 @@
           }
         })
         .then(() => {
+          localStorage.setItem("fullName", fullName);
           window.location.href = role === 'user' ? 'opportunity.html' : 'recruiter.html';
         })
         .catch((error) => {

@@ -1,4 +1,5 @@
-    /* Global Styles */
+     Global Styles 
+     
     :root {
         --primary: #1e40af;
         --secondary: #10b981;
@@ -17,7 +18,7 @@
       }
       
       body {
-        background-color: #f8fafc;
+        background-color: #fdfeff;
         color: var(--dark);
         line-height: 1.6;
       }
@@ -28,10 +29,10 @@
         margin: 0 auto;
       }
       
-      /* Header Styles */
+    
       header {
-        background-color: var(--light);
-        color: white;
+        background-color: var(--primary);
+        color: rgb(177, 220, 233);
         padding: 1rem 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         position: sticky;
@@ -66,7 +67,7 @@
       }
       
       .nav-links a {
-        color: white;
+        color: rgb(7, 7, 7);
         text-decoration: none;
         transition: color 0.3s;
       }
@@ -83,6 +84,7 @@
         font-size: 1.5rem;
         cursor: pointer;
       }
+      
 
 
 
@@ -92,4 +94,4 @@
 
 
 
-
+ 

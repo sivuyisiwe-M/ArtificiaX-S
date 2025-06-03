@@ -6,7 +6,56 @@
   border: 1px solid #ddd;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+.resume-file {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  position: relative; /* Add this line */
+}
+.resume-options-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+}
+.resume-options-menu {
+  display: none;
+  position: absolute;
+  top: 30px; /* Add this line */
+  right: 10px; /* Add this line */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
+.resume-options-menu.show {
+  display: block;
+}
+.resume-options-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.resume-options-menu li {
+  margin-bottom: 10px;
+}
+
+.resume-options-menu a {
+  text-decoration: none;
+  color: #337ab7;
+}
+
+.resume-options-menu a:hover {
+  color: #23527c;
+}
 .profile-info {
   margin-bottom: 20px;
 }

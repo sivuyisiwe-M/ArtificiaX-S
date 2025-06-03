@@ -1,196 +1,700 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Youth & Mentor Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/source/opportunity.css">
-  <link rel="stylesheet" href="/source/Dev5.css">
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UbuntuPlug - Connect & Collaborate</title>
+    <link rel="stylesheet" href="/source/Dev5.css">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
-      padding: 20px;
-    }
 
-    h2 {
-      font-size: 24px;
-      color: #ffa600;
-      text-shadow: 0 0 8px #ffa600;
-      margin-bottom: 20px;
-    }
+    <style>
 
-    .chat-section {
-      max-width: 600px;
-      margin: auto;
-        margin-top: 70px;
-        background-color: #1f1d1d;
-    }
+        /* Header Navigation Bar */
+.navbar {
+    background: linear-gradient(135deg, #FF6600, #FF8533);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    width: 100%;
+    box-sizing: border-box;
+    color: rgb(25, 165, 72);
+}
 
-    .chat-box {
-      background: #1e1e1e;
-      padding: 15px;
-      border-radius: 8px;
-      height: 300px;
-      overflow-y: auto;
-      margin-bottom: 15px;
-      border: 1px solid #333;
-    }
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff; /* White color for the logo text */
+}
 
-    .message {
-      margin-bottom: 12px;
-      padding: 8px;
-      border-radius: 6px;
-      background: #2c2c2c;
-    }
+.nav-links {
+    display: flex;
+    gap: 20px; /* Space between navigation links */
+}
 
-    .mentor {
-      background: #002855;
-      color: #a5e1ff;
-    }
+.nav-links a {
+    color: rgb(20, 20, 20);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
 
-    .name {
-      font-weight: bold;
-    }
+.nav-links a:hover {
+    color: #337ab7;
+}
 
-    form {
-      background: #1e1e1e;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    input, textarea {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      background-color: #2c2c2c;
-      border: 1px solid #444;
-      color: #ffffff;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #bbb;
-    }
-
-    button {
-      padding: 10px 20px;
-      background: #ffa600;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #ff8800;
-    }
-  </style>
+/* Ensure the container adjusts below the header */
+.container {
+    margin-top: 60px; /* Adjust this value based on the height of your header */
+}
+    </style>
 </head>
 <body>
-  <header>
-            <div class="container header-container">
-                <div class="logo">
-                    
-                    <h1>ubuntu<span>Plug</span></h1>
-                </div>
-                <nav>
-                    <ul id="menu">
-        <li><a href="/dev1.html">Home</a></li>
-        <li><a href="/opportunity.html">Opportunities</a></li>
-        <li><a href="/skillup.html">Skill Up</a></li>
-        <li><a href="/dev4.html">Mentorship</a></li>
-        <li><a href="/dev5.html">community forum</a></li>
-                        <!-- <li><a href="#events">Events</a></li> -->
-                    </ul>
-                    <div class="mobile-menu" id="mobile-menu">
-                        <i class="fa-solid fa-bars"></i>
-                    </div>
-                </nav>
+
+<header class="navbar">
+        <div class="logo">UbuntuPlug</div>
+        <nav class="nav-links">
+            <a href="/dev1.html">Home</a>
+            <a href="/opportunity.html">Opportunities</a>
+            <a href="/skillup.html">Skill Up</a>
+            <a href="/dev4.html">Mentorship</a>
+            <a href="/dev5.html">Community Forum</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>🚀 Quick Actions</h3>
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="showInviteModal()">Invite User</button>
+                <button class="quick-action-btn" onclick="clearChat()">Clear Chat</button>
+                <button class="quick-action-btn" onclick="showUserManagementModal()">Manage Users</button>
             </div>
-        </header>
 
-  <section class="chat-section">
-    <h2>💬 Community Hub</h2>
+            <h3>📁 Shared Files</h3>
+            <div id="shared-files">
+                <!-- Shared files will be populated here -->
+            </div>
 
-    <div class="chat-box" id="chatBox">
-      <!-- Chat messages will be dynamically added here -->
+            <div class="online-users">
+                <h3>👥 Online Users</h3>
+                <div id="online-users-list">
+                    <!-- Online users will be populated here -->
+                </div>
+
+                <h3>📈 Stats</h3>
+                <div id="chat-stats">
+                    <p>Messages today: <span id="messages-count">0</span></p>
+                    <p>Files shared: <span id="files-count">0</span></p>
+                    <p>Total users: <span id="users-count">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-chat">
+            <div class="chat-header">
+                <h2>🌐 UbuntuPlug Community</h2>
+                <p>Connect, Share, Collaborate</p>
+                <p id="user-greeting">Welcome, <span id="current-user-name">Anonymous</span>!</p>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will be populated here -->
+            </div>
+
+            <div class="chat-input">
+                <div class="post-type-selector">
+                    <button class="post-type-btn active" data-type="message">💬 Message</button>
+                    <button class="post-type-btn" data-type="link">🔗 Link</button>
+                    <button class="post-type-btn" data-type="image">🖼️ Image</button>
+                </div>
+
+                <div class="input-area">
+                    <textarea id="message-input" class="message-input" placeholder="Type your message..."></textarea>
+                    <button class="attachment-btn" onclick="toggleEmojiPicker()">😊</button>
+                    <button class="attachment-btn" onclick="showFileUpload()">📎</button>
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+
+<div class="emoji-picker" id="emoji-picker">
+  <span class="emoji" onclick="addEmoji('😀')">😀</span>
+  <span class="emoji" onclick="addEmoji('😂')">😂</span>
+  <span class="emoji" onclick="addEmoji('❤️')">❤️</span>
+  <span class="emoji" onclick="addEmoji('👍')">👍</span>
+  <span class="emoji" onclick="addEmoji('🎉')">🎉</span>
+  <span class="emoji" onclick="addEmoji('🔥')">🔥</span>
+  <span class="emoji" onclick="addEmoji('💼')">💼</span>
+  <span class="emoji" onclick="addEmoji('🚀')">🚀</span>
+  <span class="emoji" onclick="addEmoji('💡')">💡</span>
+  <span class="emoji" onclick="addEmoji('⭐')">⭐</span>
+  <span class="emoji" onclick="addEmoji('😍')">😍</span>
+  <span class="emoji" onclick="addEmoji('🤣')">🤣</span>
+  <span class="emoji" onclick="addEmoji('😢')">😢</span>
+  <span class="emoji" onclick="addEmoji('😠')">😠</span>
+  <span class="emoji" onclick="addEmoji('👀')">👀</span>
+  <span class="emoji" onclick="addEmoji('🤔')">🤔</span>
+  <span class="emoji" onclick="addEmoji('🚫')">🚫</span>
+  <span class="emoji" onclick="addEmoji('💯')">💯</span>
+  <span class="emoji" onclick="addEmoji('🤝')">🤝</span>
+  <span class="emoji" onclick="addEmoji('🌟')">🌟</span>
+  <span class="emoji" onclick="addEmoji('📚')">📚</span>
+  <span class="emoji" onclick="addEmoji('🎈')">🎈</span>
+  <span class="emoji" onclick="addEmoji('🎁')">🎁</span>
+  <span class="emoji" onclick="addEmoji('😋')">😋</span>
+</div>
+            </div>
+        </div>
     </div>
 
-    <form id="chatForm">
-      <input type="text" id="userName" placeholder="Your Name" required>
-      <textarea id="userMessage" placeholder="Type your message..." required></textarea>
-      <button type="submit">Send</button>
-    </form>
-  </section>
+    <!-- Invite User Modal -->
+    <div class="modal" id="invite-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('invite-modal')">×</span>
+            <h3>Invite User</h3>
+            <form id="invite-form">
+                <div class="form-group">
+                    <label for="invite-email">Email Address:</label>
+                    <input type="email" id="invite-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="invite-message">Personal Message:</label>
+                    <textarea id="invite-message" rows="3" placeholder="Join our amazing community!"></textarea>
+                </div>
+                <button type="submit" class="send-btn">Send Invitation</button>
+            </form>
+        </div>
+    </div>
 
-  <script>
-    // Replace with your actual config
-const firebaseConfig = {
-  apiKey: "AIzaSyDt2CXtgnGCBo0CFmrvnAYwgh1iBrmsi-A",
-  authDomain: "ubuntu-plug.firebaseapp.com",
-  databaseURL: "https://ubuntu-plug-default-rtdb.firebaseio.com",
-  projectId: "ubuntu-plug",
-  storageBucket: "ubuntu-plug.firebasestorage.app",
-  messagingSenderId: "666310061191",
-  appId: "1:666310061191:web:89f8c03ba001cc69699c22",
-  measurementId: "G-2XNGY72N58"
-};
+    <!-- User Management Modal -->
+    <div class="modal" id="user-management-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('user-management-modal')">×</span>
+            <h3>User Management</h3>
+            <div class="form-group">
+                <label for="new-username">Add New User:</label>
+                <input type="text" id="new-username" placeholder="Enter username">
+                <button type="button" onclick="addUser()" class="send-btn">Add User</button>
+            </div>
+            <div class="users-list">
+                <h4>Registered Users:</h4>
+                <div id="users-list">
+                    <!-- Users will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
-// Initialize Firebase
- firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    <!-- File Upload Modal -->
+    <div class="modal" id="file-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('file-modal')">×</span>
+            <h3>Share File</h3>
+            <form id="file-form">
+                <div class="form-group">
+                    <label for="file-input">Choose File:</label>
+                    <input type="file" id="file-input" accept="*/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="file-description">Description:</label>
+                    <textarea id="file-description" rows="2" placeholder="Optional description..."></textarea>
+                </div>
+                <button type="submit" class="send-btn">Share File</button>
+            </form>
+        </div>
+    </div>
 
-    const chatForm = document.getElementById("chatForm");
-    const chatBox = document.getElementById("chatBox");
+    <input type="file" id="hidden-file-input" style="display: none;" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/*">
 
-    chatForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+    import { 
+        getFirestore, 
+        collection, 
+        addDoc, 
+        query, 
+        orderBy, 
+        onSnapshot, 
+        doc, 
+        updateDoc, 
+        deleteDoc,
+        serverTimestamp,
+        increment,
+        getDoc,
+        setDoc,
+        where,
+        getDocs,
+        Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+    import { 
+        getStorage, 
+        ref, 
+        uploadBytes, 
+        getDownloadURL 
+    } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-storage.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
 
-      const name = document.getElementById("userName").value.trim();
-      const message = document.getElementById("userMessage").value.trim();
+    const firebaseConfig = {
+        apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+        authDomain: "ubuntuplug.firebaseapp.com",
+        databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+        projectId: "ubuntuplug",
+        storageBucket: "ubuntuplug.appspot.com",
+        messagingSenderId: "887406432080",
+        appId: "1:887406432080:web:108e0de9c61d13f418a655",
+        measurementId: "G-2J53SZ2K0N"
+    };
 
-      if (name && message) {
-        const newMessageRef = db.ref("chatMessages").push();
-        newMessageRef.set({
-          name: name,
-          message: message,
-          timestamp: Date.now()
+    if (!localStorage.getItem("fullName")) {
+        window.location.href = 'login.html';
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const auth = getAuth(app);
+
+    let currentUser = (localStorage.getItem("fullName") || "Anonymous").replace(/\s+/g, '_');
+    let currentPostType = "message";
+    let messagesCount = 0;
+    let filesCount = 0;
+    let usersCount = 0;
+
+    const USERS_COLLECTION_PATH = 'userStatus';
+
+    const parseCustomDate = (dateString) => {
+        const parts = dateString.match(/(\d+)\s(\w+)\s(\d+)\sat\s(\d+):(\d+):(\d+)\sUTC\+2/);
+        if (!parts) {
+            console.error("Invalid date format:", dateString);
+            return new Date();
+        }
+        const [_, day, month, year, hours, minutes, seconds] = parts;
+        const formattedDate = `${day} ${month} ${year} ${hours}:${minutes}:${seconds} +0200`;
+        return new Date(Date.parse(formattedDate));
+    };
+
+    const migrateUserStatusData = async () => {
+        const usersRef = collection(db, "userStatus");
+        const querySnapshot = await getDocs(usersRef);
+        const migrationPromises = querySnapshot.docs
+            .filter(doc => typeof doc.data().lastSeen === 'string')
+            .map(async (doc) => {
+                const user = doc.data();
+                await updateDoc(doc.ref, { lastSeen: serverTimestamp() });
+                console.log(`Migrated lastSeen for ${user.username} from string to Timestamp`);
+            });
+        await Promise.all(migrationPromises);
+    };
+
+    const displayUserName = () => {
+        const userNameElement = document.getElementById('current-user-name');
+        if (userNameElement) userNameElement.textContent = currentUser;
+    };
+
+    const addUserToFirestore = async (username) => {
+        try {
+            const sanitizedUsername = username.replace(/\s+/g, '_');
+            const userRef = doc(db, USERS_COLLECTION_PATH, sanitizedUsername);
+            await setDoc(userRef, {
+                username: sanitizedUsername,
+                joinedAt: serverTimestamp(),
+                status: 'online',
+                lastSeen: serverTimestamp()
+            });
+            showNotification(`User ${sanitizedUsername} added successfully!`);
+            return true;
+        } catch (error) {
+            console.error("Error adding user:", error);
+            showNotification('Error adding user', 'error');
+            return false;
+        }
+    };
+
+    const removeUserFromFirestore = async (username) => {
+        try {
+            const sanitizedUsername = username.replace(/\s+/g, '_');
+            const userRef = doc(db, USERS_COLLECTION_PATH, sanitizedUsername);
+            await deleteDoc(userRef);
+            showNotification(`User ${sanitizedUsername} removed successfully!`);
+        } catch (error) {
+            console.error("Error removing user:", error);
+            showNotification('Error removing user', 'error');
+        }
+    };
+
+    const loadUsers = () => {
+        const usersRef = collection(db, USERS_COLLECTION_PATH);
+        onSnapshot(usersRef, (querySnapshot) => {
+            const usersList = document.getElementById("users-list");
+            usersList.innerHTML = '';
+            usersCount = 0;
+            querySnapshot.forEach((doc) => {
+                const user = doc.data();
+                usersCount++;
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-management-item';
+                userDiv.innerHTML = `
+                    <div class="user-info">
+                        <span class="username">${user.username}</span>
+                        <small>Joined: ${formatTime(user.joinedAt)}</small>
+                    </div>
+                    <button class="remove-user-btn" onclick="removeUser('${user.username}')">Remove</button>
+                `;
+                usersList.appendChild(userDiv);
+            });
+            updateStats();
+        });
+    };
+
+    let statusUpdateTimeout;
+    const updateUserStatusDebounced = async (status) => {
+        if (statusUpdateTimeout) clearTimeout(statusUpdateTimeout);
+        statusUpdateTimeout = setTimeout(async () => {
+            try {
+                const userRef = doc(db, USERS_COLLECTION_PATH, currentUser);
+                await updateDoc(userRef, {
+                    status: status,
+                    lastSeen: serverTimestamp()
+                });
+                console.log(`Updated status for ${currentUser} to ${status} at ${new Date().toISOString()}`);
+            } catch (error) {
+                if (error.code === 'not-found') {
+                    await addUserToFirestore(currentUser);
+                } else {
+                    console.error("Error updating user status:", error);
+                }
+            }
+        }, 30000);
+    };
+
+    const initApp = async () => {
+        try {
+            const user = auth.currentUser;
+            if (!user && !localStorage.getItem("fullName")) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await addUserToFirestore(currentUser);
+            await updateUserStatusDebounced("online");
+            await migrateUserStatusData();
+            loadMessages();
+            loadOnlineUsers();
+            loadUsers();
+            setupEventListeners();
+            displayUserName();
+        } catch (error) {
+            console.error("Error initializing app:", error);
+            showNotification('Error initializing app', 'error');
+        }
+    };
+
+    const loadMessages = () => {
+        const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+        onSnapshot(q, (querySnapshot) => {
+            const messagesContainer = document.getElementById("chat-messages");
+            messagesContainer.innerHTML = '';
+            messagesCount = 0;
+            filesCount = 0;
+            querySnapshot.forEach((doc) => {
+                const message = doc.data();
+                message.id = doc.id;
+                displayMessage(message);
+                messagesCount++;
+                if (message.type === 'file') filesCount++;
+            });
+            updateStats();
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    };
+
+    const loadOnlineUsers = () => {
+        const usersRef = collection(db, "userStatus");
+        onSnapshot(usersRef, (querySnapshot) => {
+            const onlineUsersContainer = document.getElementById("online-users-list");
+            const users = new Map();
+            querySnapshot.forEach((doc) => {
+                const user = doc.data();
+                const username = user.username;
+                console.log("User data:", user);
+                if (!users.has(username) || (users.get(username).lastSeen && user.lastSeen && users.get(username).lastSeen < user.lastSeen)) {
+                    users.set(username, user);
+                }
+            });
+            onlineUsersContainer.innerHTML = '';
+            users.forEach((user) => {
+                const now = new Date();
+                let lastSeen;
+                if (typeof user.lastSeen === 'string') {
+                    lastSeen = parseCustomDate(user.lastSeen);
+                } else if (user.lastSeen && user.lastSeen.toDate) {
+                    lastSeen = user.lastSeen.toDate();
+                } else {
+                    lastSeen = new Date();
+                }
+                const timeDiff = (now - lastSeen) / 1000;
+                const isOnline = user.status === 'online' && timeDiff < 600; // Temporary threshold
+                console.log(`Username: ${user.username}, Status: ${user.status}, LastSeen: ${lastSeen}, TimeDiff: ${timeDiff} seconds, IsOnline: ${isOnline}`);
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-item';
+                userDiv.innerHTML = `
+                    <div class="${isOnline ? 'status-indicator' : 'status-indicator offline'}"></div>
+                    <span>${user.username}</span>
+                `;
+                onlineUsersContainer.appendChild(userDiv);
+            });
+        });
+    };
+
+    const displayMessage = (message) => {
+        const messagesContainer = document.getElementById("chat-messages");
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        messageDiv.dataset.messageId = message.id;
+        let content = '';
+        if (message.type === 'file') {
+            if (message.fileType?.startsWith('image/')) {
+                content = `<img src="${message.fileUrl}" alt="${message.fileName}" class="image-attachment"><p>${message.description || message.fileName}</p>`;
+            } else {
+                content = `
+                    <div class="file-attachment">
+                        <span>📎</span>
+                        <div><a href="${message.fileUrl}" target="_blank">${message.fileName}</a><p>${message.description || ''}</p></div>
+                    </div>
+                `;
+            }
+        } else if (message.type === 'link') {
+            content = `<p>${message.text}</p><a href="${message.linkUrl}" target="_blank" style="color: #667eea; text-decoration: underline;">${message.linkUrl}</a>`;
+        } else {
+            content = `<p>${message.text}</p>`;
+        }
+        messageDiv.innerHTML = `
+            <div class="message-header">
+                <span class="message-user">${message.username}</span>
+                <span class="message-time">${formatTime(message.timestamp)}</span>
+            </div>
+            <div class="message-content">${content}</div>
+            <div class="message-actions">
+                <button class="action-btn like-btn" onclick="likeMessage('${message.id}')">❤️ ${message.likes || 0}</button>
+                <button class="action-btn" onclick="replyToMessage('${message.id}')">💬 Reply</button>
+                <button class="action-btn" onclick="forwardMessage('${message.id}')">↗️ Forward</button>
+                <button class="action-btn" onclick="deleteMessage('${message.id}')">🗑️ Delete</button>
+            </div>
+            <div class="replies" id="replies-${message.id}">
+                ${message.replies ? message.replies.map(reply => `
+                    <div class="reply"><strong>${reply.username}:</strong> ${reply.text}<small>(${formatTime(reply.timestamp)})</small></div>
+                `).join('') : ''}
+            </div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+    };
+
+    window.sendMessage = async () => {
+        const input = document.getElementById('message-input');
+        const text = input.value.trim();
+        if (!text) return;
+        try {
+            const messageData = { username: currentUser, text, timestamp: serverTimestamp(), type: currentPostType, likes: 0, replies: [] };
+            if (currentPostType === 'link') {
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                const urls = text.match(urlRegex);
+                if (urls && urls.length > 0) messageData.linkUrl = urls[0];
+            }
+            await addDoc(collection(db, "messages"), messageData);
+            input.value = '';
+            showNotification('Message sent successfully!');
+        } catch (error) {
+            console.error("Error sending message:", error);
+            showNotification('Error sending message', 'error');
+        }
+    };
+
+    window.uploadFile = async (file, description) => {
+        try {
+            const storageRef = ref(storage, `files/${Date.now()}_${file.name}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            const messageData = {
+                username: currentUser,
+                timestamp: serverTimestamp(),
+                type: 'file',
+                fileName: file.name,
+                fileUrl: downloadURL,
+                fileType: file.type,
+                description,
+                likes: 0,
+                replies: []
+            };
+            await addDoc(collection(db, "messages"), messageData);
+            showNotification('File shared successfully!');
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            showNotification('Error uploading file', 'error');
+        }
+    };
+
+    window.addUser = async () => {
+        const usernameInput = document.getElementById('new-username');
+        const username = usernameInput.value.trim();
+        if (!username) {
+            showNotification('Please enter a username', 'error');
+            return;
+        }
+        const success = await addUserToFirestore(username);
+        if (success) usernameInput.value = '';
+    };
+
+    window.removeUser = async (username) => {
+        if (confirm(`Are you sure you want to remove user "${username}"?`)) {
+            await removeUserFromFirestore(username);
+        }
+    };
+
+    window.likeMessage = async (messageId) => {
+        try {
+            const messageRef = doc(db, "messages", messageId);
+            await updateDoc(messageRef, { likes: increment(1) });
+        } catch (error) {
+            console.error("Error liking message:", error);
+        }
+    };
+
+    window.replyToMessage = (messageId) => {
+        const replyText = prompt("Enter your reply:");
+        if (replyText) addReply(messageId, replyText);
+    };
+
+    const addReply = async (messageId, replyText) => {
+        try {
+            const messageRef = doc(db, "messages", messageId);
+            const messageDoc = await getDoc(messageRef);
+            const messageData = messageDoc.data();
+            const newReply = { username: currentUser, text: replyText, timestamp: new Date() };
+            const updatedReplies = messageData.replies ? [...messageData.replies, newReply] : [newReply];
+            await updateDoc(messageRef, { replies: updatedReplies });
+            showNotification('Reply added successfully!');
+        } catch (error) {
+            console.error("Error adding reply:", error);
+            showNotification('Error adding reply', 'error');
+        }
+    };
+
+    window.forwardMessage = (messageId) => {
+        const recipient = prompt("Forward to (username):");
+        if (recipient) showNotification(`Message forwarded to ${recipient}!`);
+    };
+
+    window.deleteMessage = async (messageId) => {
+        if (confirm("Are you sure you want to delete this message?")) {
+            try {
+                await deleteDoc(doc(db, "messages", messageId));
+                showNotification('Message deleted successfully!');
+            } catch (error) {
+                console.error("Error deleting message:", error);
+                showNotification('Error deleting message', 'error');
+            }
+        }
+    };
+
+    const showNotification = (message, type = 'success') => {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.style.cssText = `
+            position: fixed; top: 20px; right: 20px; padding: 10px 20px; color: white; border-radius: 5px; z-index: 1000;
+            background: ${type === 'error' ? '#e74c3c' : '#27ae60'};
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    };
+
+    const formatTime = (timestamp) => {
+        if (!timestamp) return 'Just now';
+        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const updateStats = () => {
+        document.getElementById('messages-count').textContent = messagesCount;
+        document.getElementById('files-count').textContent = filesCount;
+        document.getElementById('users-count').textContent = usersCount;
+    };
+
+    window.showInviteModal = () => document.getElementById('invite-modal').classList.add('show');
+    window.showUserManagementModal = () => document.getElementById('user-management-modal').classList.add('show');
+    window.showFileUpload = () => document.getElementById('file-modal').classList.add('show');
+    window.closeModal = (modalId) => document.getElementById(modalId).classList.remove('show');
+    window.toggleEmojiPicker = () => document.getElementById('emoji-picker').classList.toggle('show');
+    window.addEmoji = (emoji) => {
+        document.getElementById('message-input').value += emoji;
+        document.getElementById('emoji-picker').classList.remove('show');
+    };
+    window.clearChat = () => {
+        if (confirm("Are you sure you want to clear the chat? This action cannot be undone.")) {
+            showNotification('Chat cleared!');
+        }
+    };
+
+    const setupEventListeners = () => {
+        document.querySelectorAll('.post-type-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.post-type-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentPostType = e.target.dataset.type;
+                const input = document.getElementById('message-input');
+                switch (currentPostType) {
+                    case 'link': input.placeholder = 'Share a link with description...'; break;
+                    case 'image': input.placeholder = 'Describe your image...'; document.getElementById('hidden-file-input').click(); break;
+                    default: input.placeholder = 'Type your message...';
+                }
+            });
         });
 
-        chatForm.reset();
-      }
-    });
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
 
-    db.ref("chatMessages").on("child_added", function (snapshot) {
-      const data = snapshot.val();
-      const isMentor = data.name.toLowerCase().includes("mentor");
+        document.getElementById('invite-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('invite-email').value;
+            const message = document.getElementById('invite-message').value;
+            showNotification(`Invitation sent to ${email}!`);
+            closeModal('invite-modal');
+            e.target.reset();
+        });
 
-      const div = document.createElement("div");
-      div.classList.add("message");
-      if (isMentor) div.classList.add("mentor");
+        document.getElementById('file-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('file-input');
+            const description = document.getElementById('file-description').value;
+            if (fileInput.files.length > 0) {
+                uploadFile(fileInput.files[0], description);
+                closeModal('file-modal');
+                e.target.reset();
+            }
+        });
 
-      div.innerHTML = `<div class="name">${data.name}</div><div class="text">${data.message}</div>`;
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
-  </script>
+        document.getElementById('hidden-file-input').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                uploadFile(e.target.files[0], 'Shared image');
+                currentPostType = 'message';
+                document.querySelector('.post-type-btn[data-type="message"]').classList.add('active');
+                document.querySelector('.post-type-btn[data-type="image"]').classList.remove('active');
+            }
+        });
 
-<section class="contact-section">
-  <h2>📬 <span class="glow">Contact Us</span></h2>
-  <form id="contactForm">
-    <input type="text" id="contactName" placeholder="Your Name" required>
-    <input type="email" id="contactEmail" placeholder="Your Email" required>
-    <textarea id="contactMessage" placeholder="Your Message" required></textarea>
-    <button type="submit">Send</button>
-  </form>
-</section>
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.emoji-picker') && !e.target.closest('.attachment-btn')) {
+                document.getElementById('emoji-picker').classList.remove('show');
+            }
+        });
+    };
+
+    initApp();
+</script>
+
 </body>
 </html>
-

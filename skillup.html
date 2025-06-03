@@ -1,62 +1,223 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
-<body>
- 
-  <div id="course-container"></div>
-
-
-
- 
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script>
-    const firebaseConfig = {
-  apiKey: "AIzaSyCeeRzjQMaTEV0xg40jNgQvCYqxaB1iNEA",
-  authDomain: "skill-up-5219f.firebaseapp.com",
-  projectId: "skill-up-5219f",
-  storageBucket: "skill-up-5219f.firebasestorage.app",
-  messagingSenderId: "473313118649",
-  appId: "1:473313118649:web:969cc581db1ac5a8cb0e68",
-  measurementId: "G-LZRGDGRK7S"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = firebase.firestore();
-</script>
-
-
-<script src="/skillup.js"></script>
-</body>
-</html>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu Plug</title>
-    <link rel="stylesheet" href="/source/Dev3.css">
-    <link rel="stylesheet" href="/source/style.css">
-   
-</head>
-
-<body>
-
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Skills Board</title>
-  <link rel="stylesheet" href="style."/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f7f8fc;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Header Styles */
+    header {
+    background: linear-gradient(135deg, #FF6600, #FF8533);
+      padding: 1rem;
+      color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .logo span {
+      color: #fff;
+    }
+    
+    .nav-links {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      opacity: 0.8;
+    }
+    
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    /* Main Content */
+    main {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1, h2, h3 {
+      color: #333;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    /* Form Elements */
+    select, button, input {
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    
+    input {
+      width: 100%;
+      max-width: 300px;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #ddd;
+      cursor: text;
+    }
+    
+    button {
+      background-color: #ff4800;
+      color: white;
+      margin: 0.3rem;
+      transition: background 0.3s ease;
+    }
+    
+    button:hover {
+      background-color: #e64100;
+    }
+    
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-top: 1rem;
+    }
+    
+    /* Sections */
+    section {
+      margin-bottom: 2rem;
+    }
+    
+    /* Course List */
+    #courseList {
+      list-style: none;
+      padding: 0;
+    }
+    
+    #courseList li {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    #courseList a {
+      color: #ff5100;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    #courseList a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Form Styling */
+    #courseForm {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: end;
+    }
+    
+    /* Download Links */
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .card ul li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .card ul a {
+      color: #ff4800;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .card ul a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: rgb(255, 81, 0);
+        padding: 1rem;
+        gap: 1rem;
+      }
+      
+      .nav-links.active {
+        display: flex;
+      }
+      
+      .menu-toggle {
+        display: block;
+      }
+      
+      #courseForm {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      input {
+        max-width: none;
+        margin-right: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- <header>
-    
- <h1>🌍 Community Skills Board</h1>
-    <p>Explore or share free/affordable courses and resources</p>
-  </header> -->
-<header>
-   
-  
+  <!-- Header Section -->
+  <header>
     <div class="container header-content">
       <div class="logo">
         Ubuntu<span>Plug</span>
@@ -67,51 +228,172 @@ const db = firebase.firestore();
         <li><a href="/opportunity.html">Opportunities</a></li>
         <li><a href="/skillup.html">Skill Up</a></li>
         <li><a href="/dev4.html">Mentorship</a></li>
-        <li><a href="/dev5.html">community forum</a></li>
-        
+        <li><a href="/dev5.html">Community Forum</a></li>
       </ul>
     </div>
   </header>
-  
-  <section id="courses">
-    <h2>📚 Curated Courses</h2>
-    <ul id="courseList">
-     
-    </ul>
-  </section>
 
-  <section id="tutorials">
-    <h2>🛠️ Tutorials</h2>
-    <ul>
-      <li><a href="https://www.freecodecamp.org/">Coding - FreeCodeCamp</a></li>
-      <li><a href="https://novoresume.com/">CV Writing - NovoResume</a></li>
-      <li><a href="https://www.alison.com/">Business Skills - Alison</a></li>
-    </ul>
-  </section>
+  <main>
+    <h1>🌍 Skill Up Page</h1>
 
-  <section id="languages">
-    <h2>🗣️ Language Support</h2>
-    <ul>
-      <li><a href="https://www.duolingo.com/course/en/xh">Learn Xhosa (Duolingo)</a></li>
-      <li><a href="https://www.duolingo.com/course/en/zu">Learn Zulu (Duolingo)</a></li>
-      <li><a href="https://www.britishcouncil.org/">Learn English (British Council)</a></li>
-    </ul>
-  </section>
+    <section id="courses" class="card">
+      <h2>📚 Curated Courses</h2>
+      <ul id="courseList"></ul>
+    </section>
 
-  <section id="submit">
-    <h2>🏢 Submit Your Course</h2>
-    <form id="courseForm">
-      <input type="text" id="title" placeholder="Course Title" required />
-      <input type="url" id="url" placeholder="Course URL" required />
-      <input type="text" id="org" placeholder="Organization Name" required />
-      <button type="submit">Submit</button>
-    </form>
-  </section>
+    <section id="submit" class="card">
+      <h2>🏢 Submit Your Course</h2>
+      <form id="courseForm">
+        <input type="text" id="title" placeholder="Course Title" required />
+        <input type="url" id="url" placeholder="Course URL" required />
+        <input type="text" id="org" placeholder="Organization Name" required />
+        <button type="submit">Submit</button>
+      </form>
+    </section>
 
-  <script src="script.js"></script>
+    <div class="card">
+      <h2>Choose Your Language:</h2>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="af">Afrikaans</option>
+        <option value="zu">Zulu</option>
+        <option value="xh">Xhosa</option>
+        <option value="st">Sesotho</option>
+        <option value="ts">Xitsonga</option>
+        <option value="tn">Setswana</option>
+        <option value="ve">Tshivenda</option>
+        <option value="ss">Siswati</option>
+        <option value="nso">Sepedi</option>
+        <option value="nr">Southern Ndebele</option>
+      </select>
+    </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <div class="card">
+      <h2>Locally Developed Tutorials</h2>
+      <button onclick="showTutorial('cv')">CV Writing</button>
+      <button onclick="showTutorial('interview')">Interview Preparation</button>
+      <button onclick="showTutorial('digital')">Digital Literacy</button>
+    </div>
 
+    <div id="tutorialContent" class="card" style="display:none;"></div>
+    
+    <div id="certificationSection" class="card" style="display:none;">
+      <h3>🎓 Certification Available!</h3>
+      <p>Complete this tutorial and receive a downloadable certificate recognized by employers.</p>
+      <button onclick="downloadCertificate()">Download Certificate</button>
+    </div>
+
+    <div class="card">
+      <h3>📥 Offline Access</h3>
+      <p>Low on data? Download our tutorial packs:</p>
+      <ul>
+        <li><a href="downloads/cv-writing.pdf" download>CV Writing (PDF)</a></li>
+        <li><a href="downloads/interview-prep.pdf" download>Interview Prep (PDF)</a></li>
+        <li><a href="downloads/digital-literacy.pdf" download>Digital Literacy (PDF)</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- Firebase SDK (compat version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeeRzjQMaTEV0xg40jNgQvCYqxaB1iNEA",
+      authDomain: "skill-up-5219f.firebaseapp.com",
+      projectId: "skill-up-5219f",
+      storageBucket: "skill-up-5219f.appspot.com",
+      messagingSenderId: "473313118649",
+      appId: "1:473313118649:web:969cc581db1ac5a8cb0e68",
+      measurementId: "G-LZRGDGRK7S"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Mobile menu toggle
+    document.getElementById('menuToggle').addEventListener('click', function() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('active');
+    });
+
+    // Wait for DOM to load
+    document.addEventListener("DOMContentLoaded", () => {
+      const courseForm = document.getElementById("courseForm");
+      const courseList = document.getElementById("courseList");
+
+      // Submit handler
+      courseForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("title").value.trim();
+        const url = document.getElementById("url").value.trim();
+        const org = document.getElementById("org").value.trim();
+
+        if (!title || !url || !org) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        try {
+          await db.collection("courses").add({ title, url, org });
+          console.log("✅ Course added successfully");
+          courseForm.reset();
+          loadCourses();
+        } catch (error) {
+          console.error("🔥 Error submitting course:", error);
+        }
+      });
+
+      // Load & display courses
+      async function loadCourses() {
+        courseList.innerHTML = "";
+        try {
+          const snapshot = await db.collection("courses").get();
+          snapshot.forEach((doc) => {
+            const course = doc.data();
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="${course.url}" target="_blank">${course.title}</a> – ${course.org}`;
+            courseList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("🔥 Error loading courses:", error);
+        }
+      }
+
+      loadCourses();
+    });
+
+    // Tutorial functions (placeholder - you'll need to implement these)
+    function showTutorial(type) {
+      const tutorialContent = document.getElementById('tutorialContent');
+      const certificationSection = document.getElementById('certificationSection');
+      
+      // Show tutorial content based on type
+      let content = '';
+      switch(type) {
+        case 'cv':
+          content = '<h3>CV Writing Tutorial</h3><p>Learn how to create a professional CV that stands out to employers...</p>';
+          break;
+        case 'interview':
+          content = '<h3>Interview Preparation</h3><p>Master the art of job interviews with these proven techniques...</p>';
+          break;
+        case 'digital':
+          content = '<h3>Digital Literacy</h3><p>Essential digital skills for the modern workplace...</p>';
+          break;
+      }
+      
+      tutorialContent.innerHTML = content;
+      tutorialContent.style.display = 'block';
+      certificationSection.style.display = 'block';
+    }
+
+    function downloadCertificate() {
+      alert('Certificate download functionality would be implemented here.');
+    }
+  </script>
 </body>
-</html> 
+</html>

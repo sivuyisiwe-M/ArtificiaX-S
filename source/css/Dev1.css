@@ -20,7 +20,7 @@ body::before {
 }
 
 header {
-    background-color: white;
+    background: linear-gradient(135deg, #FF6600, #FF8533);
     color: rgb(25, 165, 72);
     display: flex;
     justify-content: space-between;
@@ -139,7 +139,7 @@ nav a {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
@@ -147,7 +147,7 @@ nav a {
 
 .feature-card {
     background-color: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: left;
@@ -172,9 +172,9 @@ nav a {
 }
 
 footer {
-    background-color: #1a2b49;
+    background: linear-gradient(135deg, #FF6600, #FF8533);
     color: white;
-    padding: 20px 50px;
+    padding: 20px 30px;
     margin-top: 40px;
     position: relative;
     z-index: 1;
