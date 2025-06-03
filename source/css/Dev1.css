@@ -172,9 +172,9 @@ nav a {
 }
 
 footer {
-    background-color: #1a2b49;
+    background: linear-gradient(135deg, #FF6600, #FF8533);
     color: white;
-    padding: 20px 50px;
+    padding: 20px 30px;
     margin-top: 40px;
     position: relative;
     z-index: 1;
