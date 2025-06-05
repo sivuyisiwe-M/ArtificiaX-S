@@ -630,7 +630,7 @@
 
     function handleAuthStateChange(user) {
       if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
         return;
       }
       
@@ -646,7 +646,7 @@
             showNotification('Access denied. Admin privileges required.', 'error');
             setTimeout(() => {
               auth.signOut();
-              window.location.href = 'login.html';
+              window.location.href = 'index.html';
             }, 2000);
             return;
           }
@@ -942,7 +942,7 @@
       if (confirm('Are you sure you want to logout?')) {
         auth.signOut()
           .then(() => {
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
           })
           .catch(error => {
             showNotification('Error signing out: ' + error.message, 'error');
