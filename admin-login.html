@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -70,6 +70,81 @@
       } catch (error) {
         console.error(error);
         errorMsg.textContent = "Login failed.";
+      }
+    }
+  </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login</title>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .login-box { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
+    .login-box h2 { text-align: center; }
+    input, button { width: 100%; margin: 0.5rem 0; padding: 0.7rem; }
+    .error { color: red; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Admin Login</h2>
+    <input type="text" id="admin-email" placeholder="Email" required>
+    <input type="password" id="admin-password" placeholder="Password" required>
+    <button onclick="adminLogin()">Login</button>
+    <div class="error" id="error-msg"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQDF5RRmqx3hN8v1D91KpOxM12DtQnzyk",
+      authDomain: "ubuntuplug.firebaseapp.com",
+      databaseURL: "https://ubuntuplug-default-rtdb.firebaseio.com",
+      projectId: "ubuntuplug",
+      storageBucket: "ubuntuplug.firebasestorage.app",
+      messagingSenderId: "887406432080",
+      appId: "1:887406432080:web:108e0de9c61d13f418a655",
+      measurementId: "G-2J53SZ2K0N"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    async function adminLogin() {
+      const email = document.getElementById('admin-email').value.trim();
+      const password = document.getElementById('admin-password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+      errorMsg.textContent = "";
+
+      if (!email || !password) {
+        errorMsg.textContent = "Enter both fields.";
+        return;
+      }
+
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const uid = userCredential.user.uid;
+        const doc = await db.collection('admin').doc(uid).get();
+
+        if (doc.exists && doc.data().role === 'admin') {
+          localStorage.setItem("isAdmin", "true");
+          window.location.href = "admin-dashboard.html";
+        } else {
+          auth.signOut();
+          errorMsg.textContent = "Invalid admin user.";
+        }
+      } catch (error) {
+        errorMsg.textContent = error.message;
       }
     }
   </script>
